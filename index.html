@@ -56,7 +56,7 @@
                         <div
                             class="w-9 h-9 bg-slate-600 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
                             </div>
-                        <i class="fas fa-chevron-down text-[10px] text-slate-400 hidden md:block"></i>
+                        
                     </div>
                 </div>
             </div>
@@ -151,7 +151,7 @@
                             <tr
                                 class="bg-slate-50/50 text-slate-400 text-[11px] font-bold uppercase tracking-widest border-y border-slate-100">
                                 <th class="px-8 py-4">Task / Proyek</th>
-                                <th class="px-6 py-4">Assignee</th>
+                                <th class="px-6 py-4">PIC / UIC</th>
                                 <th class="px-6 py-4">Target Deadline</th>
                                 <th class="px-6 py-4">Sisa Waktu</th>
                                 <th class="px-6 py-4">Status</th>
@@ -180,7 +180,7 @@
                                         }}</span>
                                 </td>
                                 <td class="px-6 py-5">
-                                    <span :class="getUrgencyClass(task.daysLeft)" class="badge-pill">{{
+                                    <span :class="getUrgencyClass(task.daysLeft)" class="badge-pill whitespace-nowrap">{{
                                         getDaysText(task.daysLeft) }}</span>
                                 </td>
                                 <td class="px-6 py-5">
@@ -232,41 +232,64 @@
                 filterMonth: '', // 0-11
                 filterStart: '', // YYYY-MM-DD
                 filterEnd: '',   // YYYY-MM-DD
-                today: new Date('2026-04-15'),
+                today: new Date(new Date().toLocaleString("en-US", {timeZone: "Asia/Jakarta"})),
                 months: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
                 tasks: [],
                 showFilter: false,
             },
             computed: {
-                processedTasks() {
-                    return this.tasks.map(task => {
-                        const target = new Date(task.deadline);
-                        const diffTime = target - this.today;
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        return { ...task, daysLeft: diffDays, dateObj: target };
-                    }).sort((a, b) => a.daysLeft - b.daysLeft);
-                },
+    processedTasks() {
+        return this.tasks.map(task => {
+            const target = new Date(task.deadline);
+            
+            // Konversi target ke jam 00:00 WIB agar perbandingan "hari" murni
+            const tglTarget = new Date(target.toLocaleString("en-US", {timeZone: "Asia/Jakarta"}));
+            tglTarget.setHours(0, 0, 0, 0);
+
+            // Konversi today ke jam 00:00 WIB
+            const tglSekarang = new Date(this.today.toLocaleString("en-US", {timeZone: "Asia/Jakarta"}));
+            tglSekarang.setHours(0, 0, 0, 0);
+            
+            // Hitung selisih dalam milidetik kemudian konversi ke hari
+            const diffTime = tglTarget.getTime() - tglSekarang.getTime();
+            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+            return { 
+                ...task, 
+                daysLeft: diffDays, 
+                dateObj: tglTarget 
+            };
+        }).sort((a, b) => a.daysLeft - b.daysLeft);
+    },
                 filteredTasks() {
-                    return this.processedTasks.filter(t => {
-                        // 1. Search Filter
-                        const matchSearch = t.title.toLowerCase().includes(this.search.toLowerCase()) ||
-                            t.user.toLowerCase().includes(this.search.toLowerCase());
+        return this.processedTasks.filter(t => {
+            const filterKosong = this.filterMonth === '' && this.filterStart === '' && this.filterEnd === '';
 
-                        // 2. Month Filter
-                        const matchMonth = this.filterMonth === '' || t.dateObj.getMonth() == this.filterMonth;
+            // Tabel menyembunyikan masa lalu jika filter kosong
+            if (filterKosong && t.daysLeft < 0) {
+                return false;
+            }
 
-                        // 3. Date Range Filter
-                        const taskTime = t.dateObj.getTime();
-                        const startLimit = this.filterStart ? new Date(this.filterStart).getTime() : -Infinity;
-                        const endLimit = this.filterEnd ? new Date(this.filterEnd).getTime() : Infinity;
-                        const matchRange = taskTime >= startLimit && taskTime <= endLimit;
+            const matchSearch = t.title.toLowerCase().includes(this.search.toLowerCase()) || 
+                                t.user.toLowerCase().includes(this.search.toLowerCase());
+            const matchMonth = this.filterMonth === '' || t.dateObj.getMonth() == this.filterMonth;
+            
+            const taskTime = t.dateObj.getTime();
+            const startLimit = this.filterStart ? new Date(this.filterStart).setHours(0,0,0,0) : -Infinity;
+            const endLimit = this.filterEnd ? new Date(this.filterEnd).setHours(23,59,59,999) : Infinity;
+            const matchRange = taskTime >= startLimit && taskTime <= endLimit;
 
-                        return matchSearch && matchMonth && matchRange;
-                    });
-                },
-                criticalCount() { return this.filteredTasks.filter(t => t.daysLeft >= 0 && t.daysLeft <= 3).length; },
-                doneCount() { return this.filteredTasks.filter(t => t.daysLeft < 0).length; }
-            },
+            return matchSearch && matchMonth && matchRange;
+        });
+    },
+    // Kuncinya di sini: Gunakan processedTasks agar tetap menghitung yang tersembunyi
+    criticalCount() { 
+        return this.processedTasks.filter(t => t.daysLeft >= 0 && t.daysLeft <= 3).length; 
+    },
+    doneCount() { 
+        return this.processedTasks.filter(t => t.daysLeft < 0).length; 
+    }
+},
             methods: {
                 ambilData() {
                     this.loading = true;
@@ -296,21 +319,23 @@
                 },
                 getUrgencyClass(days) {
                     if (days < 0) return 'bg-green-100 text-green-600';
-                    if (days === 0) return 'bg-red-500 text-white';
-                    if (days <= 3) return 'bg-red-100 text-red-600';
+                    if (days === 0) return 'bg-red-700 text-white';
+                    if (days <= 1) return 'bg-red-600 text-white';
+                    if (days <= 2) return 'bg-red-500 text-white';
+                    if (days <= 3) return 'bg-red-400 text-white';
                     return 'bg-blue-100 text-blue-600';
                 },
                 getDaysText(days) {
                     if (days < 0) return 'Selesai';
                     if (days === 0) return 'Hari Ini';
-                    return days + ' Hari Lagi';
+                    return days + ' Hari';
                 }
             },
          mounted() {
     this.ambilData();
     // Jika lebar layar > 768px (Desktop), buka filter otomatis
     if (window.innerWidth > 768) {
-        this.showFilter = true;
+        this.showFilter = false;
     }
 }
         });
