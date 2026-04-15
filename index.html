@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voyager Dashboard - Real-Time Monitor</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+
+        .custom-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+        }
+
+        .badge-pill {
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        input[type="date"],
+        select {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="text-slate-700">
+
+    <div id="app" class="min-h-screen pb-10">
+
+        <div class="bg-white border-b border-slate-200 sticky top-0 z-30">
+            <div class="max-w-[1400px] mx-auto h-16 px-4 md:px-8 flex items-center justify-between">
+                <div class="flex items-center w-full max-w-md">
+                    <div class="relative w-full">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" v-model="search" placeholder="Cari tugas atau PIC..."
+                            class="w-full pl-10 pr-4 py-2 rounded-lg bg-slate-100 border-none focus:ring-2 focus:ring-blue-500 text-sm">
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 ml-4">
+                    <div class="flex items-center gap-2">
+                        <div
+                            class="w-9 h-9 bg-slate-600 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
+                            JS</div>
+                        <i class="fas fa-chevron-down text-[10px] text-slate-400 hidden md:block"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-[1400px] mx-auto p-4 md:p-8">
+
+
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div
+                    class="bg-white p-6 rounded-2xl custom-shadow flex items-center justify-between border border-slate-100">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                            <i class="fas fa-clipboard-list text-xl"></i></div>
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Tugas Terfilter</p>
+                            <h3 class="text-3xl font-black text-slate-800">{{ filteredTasks.length }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-white p-6 rounded-2xl custom-shadow flex items-center justify-between border border-slate-100">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-red-200">
+                            <i class="fas fa-exclamation-circle text-xl"></i></div>
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Kritis Terfilter</p>
+                            <h3 class="text-3xl font-black text-slate-800">{{ criticalCount }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="bg-white p-6 rounded-2xl custom-shadow flex items-center justify-between border border-slate-100">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-green-200">
+                            <i class="fas fa-check-circle text-xl"></i></div>
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Selesai Terfilter</p>
+                            <h3 class="text-3xl font-black text-slate-800">{{ doneCount }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl custom-shadow overflow-hidden border border-slate-100">
+                <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <h2 class="text-xl font-extrabold text-slate-800 tracking-tight uppercase">Monitoring Deadline
+                        Real-Time</h2>
+                    <button @click="ambilData"
+                        class="w-full md:w-auto bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center shadow-lg active:scale-95 transition-all">
+                        <i class="fas fa-sync-alt mr-2" :class="{'animate-spin': loading}"></i> Sync Data
+                    </button>
+                </div>
+
+                <div
+                    class="mx-5 bg-white p-4 rounded-2xl custom-shadow border border-slate-100 mb-8 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Pilih Bulan</label>
+                        <select v-model="filterMonth"
+                            class="w-full bg-slate-50 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-500 py-2">
+                            <option value="">Semua Bulan</option>
+                            <option v-for="(m, index) in months" :key="index" :value="index">{{ m }}</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Rentang Mulai</label>
+                        <input type="date" v-model="filterStart"
+                            class="w-full bg-slate-50 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-500 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Rentang Akhir</label>
+                        <input type="date" v-model="filterEnd"
+                            class="w-full bg-slate-50 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-500 py-2">
+                    </div>
+                    <div>
+                        <button @click="resetFilter"
+                            class="w-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-2 rounded-lg text-sm transition-all active:scale-95">
+                            <i class="fas fa-undo mr-2"></i> Reset Filter
+                        </button>
+                    </div>
+                </div>
+
+                <div class="hidden md:block overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr
+                                class="bg-slate-50/50 text-slate-400 text-[11px] font-bold uppercase tracking-widest border-y border-slate-100">
+                                <th class="px-8 py-4">Task / Proyek</th>
+                                <th class="px-6 py-4">Assignee</th>
+                                <th class="px-6 py-4">Target Deadline</th>
+                                <th class="px-6 py-4">Sisa Waktu</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-8 py-4 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr v-for="task in filteredTasks" :key="task.no"
+                                class="hover:bg-slate-50/50 transition-colors">
+                                <td class="px-8 py-5">
+                                    <div class="font-bold text-slate-700 text-sm">task-{{ String(task.no).padStart(3,
+                                        '0') }}</div>
+                                    <div class="text-xs text-slate-500 font-medium leading-relaxed">{{ task.title }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 border border-white shadow-sm">
+                                            {{ getInitials(task.user) }}</div>
+                                        <span class="text-xs font-semibold text-slate-600">{{ task.user }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <span class="text-xs font-bold text-slate-600">{{ formatDate(task.deadline)
+                                        }}</span>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <span :class="getUrgencyClass(task.daysLeft)" class="badge-pill">{{
+                                        getDaysText(task.daysLeft) }}</span>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <div class="flex items-center gap-2">
+                                        <i v-if="task.daysLeft < 0"
+                                            class="fas fa-check-circle text-green-500 text-lg"></i>
+                                        <i v-else-if="task.daysLeft <= 3" class="fas fa-star text-blue-500 text-lg"></i>
+                                        <div v-else class="w-5 h-5 border-2 border-slate-300 rounded-full"></div>
+                                        <span class="text-xs font-bold text-slate-600">{{ task.daysLeft < 0 ? 'Done' :
+                                                (task.daysLeft <=3 ? 'Priority' : 'Pending' ) }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-5 text-right"><i class="fas fa-ellipsis-v text-slate-300"></i></td>
+                            </tr>
+                            <tr v-if="filteredTasks.length === 0">
+                                <td colspan="6"
+                                    class="p-20 text-center text-slate-400 font-bold uppercase text-xs tracking-widest">
+                                    Data tidak ditemukan untuk filter ini</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="md:hidden divide-y divide-slate-100">
+                    <div v-for="task in filteredTasks" :key="'mob-'+task.no" class="p-5 flex flex-col gap-3">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[10px] font-black text-slate-400 uppercase">#task-{{
+                                String(task.no).padStart(3, '0') }}</span>
+                            <span :class="getUrgencyClass(task.daysLeft)" class="badge-pill">{{
+                                getDaysText(task.daysLeft) }}</span>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm leading-snug">{{ task.title }}</h4>
+                        <div class="flex justify-between items-center text-[10px] font-bold">
+                            <div class="text-blue-600 uppercase">{{ task.user }}</div>
+                            <div class="text-slate-400">{{ formatDate(task.deadline) }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                search: '',
+                loading: false,
+                filterMonth: '', // 0-11
+                filterStart: '', // YYYY-MM-DD
+                filterEnd: '',   // YYYY-MM-DD
+                today: new Date('2026-04-15'),
+                months: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
+                tasks: []
+            },
+            computed: {
+                processedTasks() {
+                    return this.tasks.map(task => {
+                        const target = new Date(task.deadline);
+                        const diffTime = target - this.today;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        return { ...task, daysLeft: diffDays, dateObj: target };
+                    }).sort((a, b) => a.daysLeft - b.daysLeft);
+                },
+                filteredTasks() {
+                    return this.processedTasks.filter(t => {
+                        // 1. Search Filter
+                        const matchSearch = t.title.toLowerCase().includes(this.search.toLowerCase()) ||
+                            t.user.toLowerCase().includes(this.search.toLowerCase());
+
+                        // 2. Month Filter
+                        const matchMonth = this.filterMonth === '' || t.dateObj.getMonth() == this.filterMonth;
+
+                        // 3. Date Range Filter
+                        const taskTime = t.dateObj.getTime();
+                        const startLimit = this.filterStart ? new Date(this.filterStart).getTime() : -Infinity;
+                        const endLimit = this.filterEnd ? new Date(this.filterEnd).getTime() : Infinity;
+                        const matchRange = taskTime >= startLimit && taskTime <= endLimit;
+
+                        return matchSearch && matchMonth && matchRange;
+                    });
+                },
+                criticalCount() { return this.filteredTasks.filter(t => t.daysLeft >= 0 && t.daysLeft <= 3).length; },
+                doneCount() { return this.filteredTasks.filter(t => t.daysLeft < 0).length; }
+            },
+            methods: {
+                ambilData() {
+                    this.loading = true;
+                    const url = "https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec?action=read&table=data";
+                    let app = this;
+                    $.getJSON(url, function (json) {
+                        app.tasks = json.data.map(item => ({
+                            no: item.no,
+                            title: item["nama kegiatan"],
+                            user: item.pic,
+                            deadline: item["tgl deadline"]
+                        }));
+                        app.loading = false;
+                    });
+                },
+                resetFilter() {
+                    this.filterMonth = '';
+                    this.filterStart = '';
+                    this.filterEnd = '';
+                    this.search = '';
+                },
+                getInitials(name) { return name ? name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '??'; },
+                formatDate(dateStr) {
+                    if (!dateStr) return "-";
+                    const options = { day: '2-digit', month: 'short', year: 'numeric' };
+                    return new Date(dateStr).toLocaleDateString('id-ID', options);
+                },
+                getUrgencyClass(days) {
+                    if (days < 0) return 'bg-green-100 text-green-600';
+                    if (days === 0) return 'bg-red-500 text-white';
+                    if (days <= 3) return 'bg-red-100 text-red-600';
+                    return 'bg-blue-100 text-blue-600';
+                },
+                getDaysText(days) {
+                    if (days < 0) return 'Selesai';
+                    if (days === 0) return 'Hari Ini';
+                    return days + ' Hari Lagi';
+                }
+            },
+            mounted() {
+                this.ambilData();
+            }
+        });
+    </script>
+</body>
+
+</html>
