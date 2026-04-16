@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voyager Dashboard - Real-Time Monitor</title>
+    <title>Deadline Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -178,7 +178,7 @@
 
                     <div class="flex gap-2">
                         <button @click="resetFilter"
-                            class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2 rounded-lg text-sm transition-all">
+                            class="w-full bg-orange-100 hover:bg-slate-200 text-slate-600 font-bold py-2 rounded-lg text-sm transition-all">
                             <i class="fas fa-undo mr-1"></i> Reset
                         </button>
                     </div>
@@ -194,7 +194,7 @@
                                 <th class="px-6 py-4">Target Deadline</th>
                                 <th class="px-6 py-4">Sisa Waktu</th>
                                 <th class="px-6 py-4">Status</th>
-                                <!-- <th class="px-8 py-4 text-right">Aksi</th> -->
+                                <th class="px-8 py-4 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
@@ -233,6 +233,13 @@
                                                 (task.daysLeft <=3 ? 'Priority' : 'Pending' ) }}</span>
                                     </div>
                                 </td>
+                          <td class="px-4 py-5 text-center" style="min-width: 50px;">
+    <button @click="copyToWA(task)" 
+            style="background:none; border:none; font-size: 1.5rem; cursor:pointer;" 
+            title="Copy format WA">
+        📋
+    </button>
+</td>
                                 <!-- <td class="px-8 py-5 text-right"><i class="fas fa-ellipsis-v text-slate-300"></i></td> -->
                             </tr>
                             <tr v-if="filteredTasks.length === 0">
@@ -244,21 +251,46 @@
                     </table>
                 </div>
 
-                <div class="md:hidden divide-y divide-slate-100">
-                    <div v-for="task in filteredTasks" :key="'mob-'+task.no" class="p-5 flex flex-col gap-3">
-                        <div class="flex justify-between items-start">
-                            <span class="text-[10px] font-black text-slate-400 uppercase">#task-{{
-                                String(task.no).padStart(3, '0') }}</span>
-                            <span :class="getUrgencyClass(task.daysLeft)" class="badge-pill">{{
-                                getDaysText(task.daysLeft) }}</span>
-                        </div>
-                        <h4 class="font-bold text-slate-800 text-sm leading-snug">{{ task.title }}</h4>
-                        <div class="flex justify-between items-center text-[10px] font-bold">
-                            <div class="text-blue-600 uppercase">{{ task.user }}</div>
-                            <div class="text-slate-400">{{ formatDate(task.deadline) }}</div>
-                        </div>
-                    </div>
+         <div class="md:hidden divide-y divide-slate-100">
+    <div v-for="task in filteredTasks" :key="'mob-'+task.no" class="p-5 flex flex-col gap-3 relative">
+        <div class="flex justify-between items-start">
+            <span class="text-[10px] font-black text-slate-400 uppercase">
+                #task-{{ String(task.no).padStart(3, '0') }}
+            </span>
+            
+            <div class="flex items-center gap-3">
+                <button @click="copyToWA(task)" 
+                        class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 rounded-full active:scale-90 transition-all shadow-sm"
+                        title="Copy ke WA">
+                    <span style="font-size: 14px;">📋</span>
+                </button>
+                <span :class="getUrgencyClass(task.daysLeft)" class="badge-pill">
+                    {{ getDaysText(task.daysLeft) }}
+                </span>
+            </div>
+        </div>
+
+        <h4 class="font-bold text-slate-800 text-sm leading-snug pr-10">
+            {{ task.title }}
+        </h4>
+
+        <div class="flex justify-between items-center text-[10px] font-bold border-t border-slate-50 pt-3">
+            <div class="flex items-center gap-2 text-blue-600 uppercase">
+                <div class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-[8px]">
+                    {{ getInitials(task.user) }}
                 </div>
+                {{ task.user }}
+            </div>
+            <div class="text-slate-400 bg-slate-50 px-2 py-1 rounded">
+                📅 {{ formatDate(task.deadline) }}
+            </div>
+        </div>
+    </div>
+
+    <div v-if="filteredTasks.length === 0" class="p-10 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
+        Data tidak ditemukan
+    </div>
+</div>
             </div>
         </div>
         <!-- {{linn}} -->
@@ -439,6 +471,53 @@ filteredTasks() {
                 }
             },
             methods: {
+                // Method baru untuk copy ke WhatsApp
+copyToWA(item) {
+    const data = item;
+    
+    // Sesuaikan properti dengan yang ada di template HTML Anda
+    const formattedText = 
+        `👤 PIC/UIC  : ${data.user || '-'}\n` +
+        `📝 Task     : ${data.title || '-'}\n\n` +
+        `📅 Deadline : *${this.formatDate(data.deadline) || '-'}*`;
+
+    const showToast = (message) => {
+        const toast = document.createElement("div");
+        toast.textContent = message;
+        toast.style.position = "fixed";
+        toast.style.bottom = "20px";
+        toast.style.left = "50%";
+        toast.style.transform = "translateX(-50%)";
+        toast.style.backgroundColor = "#333";
+        toast.style.color = "#fff";
+        toast.style.padding = "10px 20px";
+        toast.style.borderRadius = "25px";
+        toast.style.fontSize = "14px";
+        toast.style.zIndex = "9999";
+        toast.style.opacity = "0";
+        toast.style.transition = "opacity 0.3s ease";
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.style.opacity = "1"; }, 10);
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            setTimeout(() => { document.body.removeChild(toast); }, 300);
+        }, 2000);
+    };
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(formattedText)
+            .then(() => showToast("✅ Berhasil disalin!"))
+            .catch(() => showToast("❌ Gagal menyalin"));
+    } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = formattedText;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        showToast("✅ Berhasil disalin!");
+    }
+},
                 openTambahModal() {
                     // Menggunakan Timestamp sebagai ID unik sesuai master plan keamanan
                     this.formData.id = 'TRX-' + Date.now();
