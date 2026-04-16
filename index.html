@@ -55,8 +55,8 @@
                     <div class="flex items-center gap-2">
                         <div
                             class="w-9 h-9 bg-slate-600 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
-                            JS</div>
-                        <i class="fas fa-chevron-down text-[10px] text-slate-400 hidden md:block"></i>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -65,41 +65,50 @@
         <div class="max-w-[1400px] mx-auto p-4 md:p-8">
 
 
+            <div class="grid grid-cols-3 md:grid-cols-3 gap-3 md:gap-6 mb-6">
+                <div
+                    class="bg-white p-3 md:p-6 rounded-2xl custom-shadow border border-slate-100 flex flex-col md:flex-row items-center md:justify-between text-center md:text-left">
+                    <div class="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+                        <div
+                            class="w-10 h-10 md:w-12 md:h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-100">
+                            <i class="fas fa-clipboard-list text-sm md:text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tight">Total
+                            </p>
+                            <h3 class="text-lg md:text-3xl font-black text-slate-800 leading-none">{{
+                                filteredTasks.length }}</h3>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div
-                    class="bg-white p-6 rounded-2xl custom-shadow flex items-center justify-between border border-slate-100">
-                    <div class="flex items-center gap-4">
+                    class="bg-white p-3 md:p-6 rounded-2xl custom-shadow border border-slate-100 flex flex-col md:flex-row items-center md:justify-between text-center md:text-left">
+                    <div class="flex flex-col md:flex-row items-center gap-2 md:gap-4">
                         <div
-                            class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
-                            <i class="fas fa-clipboard-list text-xl"></i></div>
+                            class="w-10 h-10 md:w-12 md:h-12 bg-red-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-red-100">
+                            <i class="fas fa-exclamation-circle text-sm md:text-xl"></i>
+                        </div>
                         <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Tugas Terfilter</p>
-                            <h3 class="text-3xl font-black text-slate-800">{{ filteredTasks.length }}</h3>
+                            <p class="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tight">
+                                K r i t i s</p>
+                            <h3 class="text-lg md:text-3xl font-black text-slate-800 leading-none">{{ criticalCount }}
+                            </h3>
                         </div>
                     </div>
                 </div>
+
                 <div
-                    class="bg-white p-6 rounded-2xl custom-shadow flex items-center justify-between border border-slate-100">
-                    <div class="flex items-center gap-4">
+                    class="bg-white p-3 md:p-6 rounded-2xl custom-shadow border border-slate-100 flex flex-col md:flex-row items-center md:justify-between text-center md:text-left">
+                    <div class="flex flex-col md:flex-row items-center gap-2 md:gap-4">
                         <div
-                            class="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-red-200">
-                            <i class="fas fa-exclamation-circle text-xl"></i></div>
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Kritis Terfilter</p>
-                            <h3 class="text-3xl font-black text-slate-800">{{ criticalCount }}</h3>
+                            class="w-10 h-10 md:w-12 md:h-12 bg-green-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-green-100">
+                            <i class="fas fa-check-circle text-sm md:text-xl"></i>
                         </div>
-                    </div>
-                </div>
-                <div
-                    class="bg-white p-6 rounded-2xl custom-shadow flex items-center justify-between border border-slate-100">
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-green-200">
-                            <i class="fas fa-check-circle text-xl"></i></div>
                         <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Selesai Terfilter</p>
-                            <h3 class="text-3xl font-black text-slate-800">{{ doneCount }}</h3>
+                            <p class="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tight">Done
+                            </p>
+                            <h3 class="text-lg md:text-3xl font-black text-slate-800 leading-none">{{ doneCount }}</h3>
                         </div>
                     </div>
                 </div>
@@ -107,16 +116,43 @@
 
             <div class="bg-white rounded-3xl custom-shadow overflow-hidden border border-slate-100">
                 <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <h2 class="text-xl font-extrabold text-slate-800 tracking-tight uppercase">Monitoring Deadline
-                        Real-Time</h2>
-                    <button @click="ambilData"
-                        class="w-full md:w-auto bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center shadow-lg active:scale-95 transition-all">
-                        <i class="fas fa-sync-alt mr-2" :class="{'animate-spin': loading}"></i> Sync Data
-                    </button>
+                    <h2 class="text-xl font-extrabold text-slate-800 tracking-tight uppercase">
+                        Monitoring Deadline
+                    </h2>
+
+                    <div class="flex flex-wrap w-full md:w-auto gap-3">
+
+                        <button @click="showFilter = !showFilter"
+                            :class="showFilter ? 'bg-slate-800 text-white' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'"
+                            class="flex-1 md:flex-none px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center shadow-sm transition-all">
+                            <i class="fas fa-filter mr-2"></i> {{ showFilter ? 'Tutup' : 'Filter' }}
+                        </button>
+
+                        <button @click="ambilData"
+                            class="flex-1 md:flex-none bg-white text-blue-600 border border-blue-200 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center shadow-sm hover:bg-blue-50 active:scale-95 transition-all">
+                            <i class="fas fa-sync-alt mr-2" :class="{'animate-spin': loading}"></i> Sync
+                        </button>
+
+                        <button @click="openTambahModal"
+                            class="flex-[2] md:flex-none bg-indigo-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all">
+                            <i class="fas fa-plus mr-2"></i> Rekam
+                        </button>
+
+                    </div>
                 </div>
 
-                <div
-                    class="mx-5 bg-white p-4 rounded-2xl custom-shadow border border-slate-100 mb-8 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                <div v-if="showFilter"
+                    class="mx-4 md:mx-8 bg-white p-6 rounded-2xl custom-shadow border border-blue-100 mb-8 grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+
+                                        <div>
+                        <label class="block text-[10px] font-bold text-blue-500 uppercase mb-2">PIC / UIC</label>
+                        <select v-model="filterPic"
+                            class="w-full bg-slate-100 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-500 py-2">
+                            <option value="">Semua PIC</option>
+                            <option v-for="person in listPic" :key="person" :value="person">{{ person }}</option>
+                        </select>
+                    </div>
+
                     <div>
                         <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Pilih Bulan</label>
                         <select v-model="filterMonth"
@@ -125,20 +161,25 @@
                             <option v-for="(m, index) in months" :key="index" :value="index">{{ m }}</option>
                         </select>
                     </div>
+
+
+
                     <div>
                         <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Rentang Mulai</label>
                         <input type="date" v-model="filterStart"
                             class="w-full bg-slate-50 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-500 py-2">
                     </div>
+
                     <div>
                         <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Rentang Akhir</label>
                         <input type="date" v-model="filterEnd"
                             class="w-full bg-slate-50 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-500 py-2">
                     </div>
-                    <div>
+
+                    <div class="flex gap-2">
                         <button @click="resetFilter"
-                            class="w-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-2 rounded-lg text-sm transition-all active:scale-95">
-                            <i class="fas fa-undo mr-2"></i> Reset Filter
+                            class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2 rounded-lg text-sm transition-all">
+                            <i class="fas fa-undo mr-1"></i> Reset
                         </button>
                     </div>
                 </div>
@@ -149,11 +190,11 @@
                             <tr
                                 class="bg-slate-50/50 text-slate-400 text-[11px] font-bold uppercase tracking-widest border-y border-slate-100">
                                 <th class="px-8 py-4">Task / Proyek</th>
-                                <th class="px-6 py-4">Assignee</th>
+                                <th class="px-6 py-4">PIC / UIC</th>
                                 <th class="px-6 py-4">Target Deadline</th>
                                 <th class="px-6 py-4">Sisa Waktu</th>
                                 <th class="px-6 py-4">Status</th>
-                                <th class="px-8 py-4 text-right">Aksi</th>
+                                <!-- <th class="px-8 py-4 text-right">Aksi</th> -->
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
@@ -178,7 +219,8 @@
                                         }}</span>
                                 </td>
                                 <td class="px-6 py-5">
-                                    <span :class="getUrgencyClass(task.daysLeft)" class="badge-pill">{{
+                                    <span :class="getUrgencyClass(task.daysLeft)"
+                                        class="badge-pill whitespace-nowrap">{{
                                         getDaysText(task.daysLeft) }}</span>
                                 </td>
                                 <td class="px-6 py-5">
@@ -191,7 +233,7 @@
                                                 (task.daysLeft <=3 ? 'Priority' : 'Pending' ) }}</span>
                                     </div>
                                 </td>
-                                <td class="px-8 py-5 text-right"><i class="fas fa-ellipsis-v text-slate-300"></i></td>
+                                <!-- <td class="px-8 py-5 text-right"><i class="fas fa-ellipsis-v text-slate-300"></i></td> -->
                             </tr>
                             <tr v-if="filteredTasks.length === 0">
                                 <td colspan="6"
@@ -219,6 +261,78 @@
                 </div>
             </div>
         </div>
+        <!-- {{linn}} -->
+
+        <transition name="fade">
+            <div v-if="showModal"
+                class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+
+                <div
+                    class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+
+                    <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                        <h3 class="text-lg font-bold text-slate-800">Tambah Kegiatan Baru</h3>
+                        <button @click="showModal = false" class="text-slate-400 hover:text-slate-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">ID
+                                Transaksi (Otomatis)</label>
+                            <input type="text" v-model="formData.id" readonly
+                                class="w-full bg-slate-50 border border-slate-100 rounded-lg px-4 py-2.5 text-sm font-mono text-slate-500 cursor-not-allowed outline-none">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Nama
+                                Kegiatan</label>
+                            <input type="text" v-model="formData.nama_kegiatan"
+                                placeholder="Contoh: Audit Laporan Keuangan"
+                                class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">PIC</label>
+                            <input type="text" v-model="formData.pic" placeholder="Nama penanggung jawab..."
+                                class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Tanggal
+                                Deadline</label>
+                            <input type="date" v-model="formData.tgl_deadline"
+                                class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
+                        <button @click="showModal = false"
+                            class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-white transition-all">
+                            Batal
+                        </button>
+                        <button @click="simpanData"
+                            class="flex-1 px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all">
+                            Simpan Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+        <transition name="fade">
+            <div v-if="showToast"
+                class="fixed bottom-5 right-5 bg-slate-800 text-white px-6 py-3 rounded-xl shadow-2xl z-[99] flex items-center">
+                <i class="fas fa-check-circle text-green-400 mr-3"></i>
+                <span class="font-bold text-sm">{{ toastMessage }}</span>
+            </div>
+        </transition>
+
+
     </div>
 
     <script>
@@ -230,51 +344,174 @@
                 filterMonth: '', // 0-11
                 filterStart: '', // YYYY-MM-DD
                 filterEnd: '',   // YYYY-MM-DD
-                today: new Date('2026-04-15'),
+                today: new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" })),
                 months: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
-                tasks: []
+                tasks: [],
+                showFilter: false,
+                showModal: false,
+                loading: false,
+                formData: {
+                    id: '',
+                    nama_kegiatan: '',
+                    pic: '',
+                    tgl_deadline: ''
+                },
+                linn: '',
+                showToast: false,
+                toastMessage: '',
+                filterPic: '',
             },
             computed: {
+                listPic() {
+                    // 1. Ambil semua 'user' (pic) dari array tasks
+                    const allPics = this.tasks.map(task => task.user);
+
+                    // 2. Hilangkan duplikat menggunakan Set
+                    // 3. Filter jika ada string kosong
+                    // 4. Sort A-Z
+                    return [...new Set(allPics)]
+                        .filter(name => name && name.trim() !== "")
+                        .sort((a, b) => a.localeCompare(b));
+                },
                 processedTasks() {
                     return this.tasks.map(task => {
                         const target = new Date(task.deadline);
-                        const diffTime = target - this.today;
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        return { ...task, daysLeft: diffDays, dateObj: target };
+
+                        // Konversi target ke jam 00:00 WIB agar perbandingan "hari" murni
+                        const tglTarget = new Date(target.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
+                        tglTarget.setHours(0, 0, 0, 0);
+
+                        // Konversi today ke jam 00:00 WIB
+                        const tglSekarang = new Date(this.today.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
+                        tglSekarang.setHours(0, 0, 0, 0);
+
+                        // Hitung selisih dalam milidetik kemudian konversi ke hari
+                        const diffTime = tglTarget.getTime() - tglSekarang.getTime();
+                        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+                        return {
+                            ...task,
+                            daysLeft: diffDays,
+                            dateObj: tglTarget
+                        };
                     }).sort((a, b) => a.daysLeft - b.daysLeft);
                 },
-                filteredTasks() {
-                    return this.processedTasks.filter(t => {
-                        // 1. Search Filter
-                        const matchSearch = t.title.toLowerCase().includes(this.search.toLowerCase()) ||
+filteredTasks() {
+    return this.processedTasks.filter(t => {
+        // Tambahkan filterPic di pengecekan filterKosong
+        const filterKosong = this.filterMonth === '' && 
+                             this.filterStart === '' && 
+                             this.filterEnd === '' && 
+                             this.filterPic === '';
+
+        // Tabel menyembunyikan masa lalu jika filter benar-benar kosong
+        if (filterKosong && t.daysLeft < 0) {
+            return false;
+        }
+
+        // 1. Logika Pencarian (Search Bar)
+        const matchSearch = t.title.toLowerCase().includes(this.search.toLowerCase()) ||
                             t.user.toLowerCase().includes(this.search.toLowerCase());
+        
+        // 2. Logika Filter Bulan
+        const matchMonth = this.filterMonth === '' || t.dateObj.getMonth() == this.filterMonth;
 
-                        // 2. Month Filter
-                        const matchMonth = this.filterMonth === '' || t.dateObj.getMonth() == this.filterMonth;
+        // 3. Logika Filter PIC (Dropdown baru)
+        // Kita bandingkan langsung karena value dari dropdown adalah nama PIC
+        const matchPic = this.filterPic === '' || t.user === this.filterPic;
 
-                        // 3. Date Range Filter
-                        const taskTime = t.dateObj.getTime();
-                        const startLimit = this.filterStart ? new Date(this.filterStart).getTime() : -Infinity;
-                        const endLimit = this.filterEnd ? new Date(this.filterEnd).getTime() : Infinity;
-                        const matchRange = taskTime >= startLimit && taskTime <= endLimit;
+        // 4. Logika Rentang Tanggal
+        const taskTime = t.dateObj.getTime();
+        const startLimit = this.filterStart ? new Date(this.filterStart).setHours(0, 0, 0, 0) : -Infinity;
+        const endLimit = this.filterEnd ? new Date(this.filterEnd).setHours(23, 59, 59, 999) : Infinity;
+        const matchRange = taskTime >= startLimit && taskTime <= endLimit;
 
-                        return matchSearch && matchMonth && matchRange;
-                    });
+        // Gabungkan semua kondisi (Harus TRUE semua agar tampil)
+        return matchSearch && matchMonth && matchPic && matchRange;
+    });
+},
+                // Kuncinya di sini: Gunakan processedTasks agar tetap menghitung yang tersembunyi
+                criticalCount() {
+                    return this.processedTasks.filter(t => t.daysLeft >= 0 && t.daysLeft <= 3).length;
                 },
-                criticalCount() { return this.filteredTasks.filter(t => t.daysLeft >= 0 && t.daysLeft <= 3).length; },
-                doneCount() { return this.filteredTasks.filter(t => t.daysLeft < 0).length; }
+                doneCount() {
+                    return this.processedTasks.filter(t => t.daysLeft < 0).length;
+                }
             },
             methods: {
+                openTambahModal() {
+                    // Menggunakan Timestamp sebagai ID unik sesuai master plan keamanan
+                    this.formData.id = 'TRX-' + Date.now();
+                    this.formData.nama_kegiatan = '';
+                    this.formData.pic = '';
+                    this.formData.tgl_deadline = '';
+                    this.showModal = true;
+                },
+
+                showSuccessToast(pesan) {
+                    this.toastMessage = pesan;
+                    this.showToast = true;
+
+                    // Sembunyikan otomatis setelah 3 detik
+                    setTimeout(() => {
+                        this.showToast = false;
+                    }, 3000);
+                },
+
+                simpanData() {
+                    if (!this.formData.nama_kegiatan || !this.formData.pic || !this.formData.tgl_deadline) {
+                        alert('Mohon lengkapi semua data sebelum menyimpan.');
+                        return;
+                    }
+
+                    var waktu1 = Date.now();
+                    var dateObj = new Date(waktu1);
+                    var options = { timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit" };
+                    var tanggalIndonesia = new Intl.DateTimeFormat("id-ID", options).format(dateObj);
+                    var parts = tanggalIndonesia.split("/");
+                    var tanggalInput = `${parts[2]}-${parts[1]}-${parts[0]}`;
+
+                    var lin = `https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec?action=insert&table=data2026&data={"no":${waktu1},"tanggal":"${tanggalInput}","nama_kegiatan":"'${this.formData.nama_kegiatan}","pic":"'${this.formData.pic}","tgl_deadline":"${this.formData.tgl_deadline}"}`;
+
+                    let app = this;
+                    app.loading = true;
+                    app.showModal = false;
+                    $.ajax({
+                        type: "GET",
+                        url: lin,
+                        crossDomain: true,
+                        dataType: "jsonp",
+                        complete: function () {
+                            // --- LOGIKA RESET & CLOSE ---
+                            app.formData.nama_kegiatan = '';
+                            app.formData.pic = '';
+                            app.formData.tgl_deadline = '';
+
+
+                            // --- PEMANGGILAN TOAST DISINI ---
+                            app.showSuccessToast("Data Berhasil Disimpan!");
+                            this.filteredTasks = [];
+                            setTimeout(() => {
+                                if (typeof app.ambilData === "function") {
+                                    app.ambilData();
+                                }
+                                app.loading = false;
+                                console.log("Proses Simpan Berhasil Selesai");
+                            }, 1000);
+                        }
+                    });
+                },
+
                 ambilData() {
                     this.loading = true;
-                    const url = "https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec?action=read&table=data";
+                    const url = "https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec?action=read&table=data2026";
                     let app = this;
                     $.getJSON(url, function (json) {
                         app.tasks = json.data.map(item => ({
                             no: item.no,
-                            title: item["nama kegiatan"],
+                            title: item["nama_kegiatan"],
                             user: item.pic,
-                            deadline: item["tgl deadline"]
+                            deadline: item["tgl_deadline"]
                         }));
                         app.loading = false;
                     });
@@ -284,6 +521,7 @@
                     this.filterStart = '';
                     this.filterEnd = '';
                     this.search = '';
+                    this.filterPic = '';
                 },
                 getInitials(name) { return name ? name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '??'; },
                 formatDate(dateStr) {
@@ -293,18 +531,24 @@
                 },
                 getUrgencyClass(days) {
                     if (days < 0) return 'bg-green-100 text-green-600';
-                    if (days === 0) return 'bg-red-500 text-white';
-                    if (days <= 3) return 'bg-red-100 text-red-600';
+                    if (days === 0) return 'bg-red-600 text-white animate-pulse';;
+                    if (days <= 1) return 'bg-red-500 text-white';
+                    if (days <= 2) return 'bg-red-400 text-white';
+                    if (days <= 3) return 'bg-red-300 text-white';
                     return 'bg-blue-100 text-blue-600';
                 },
                 getDaysText(days) {
                     if (days < 0) return 'Selesai';
                     if (days === 0) return 'Hari Ini';
-                    return days + ' Hari Lagi';
+                    return days + ' Hari';
                 }
             },
             mounted() {
                 this.ambilData();
+                // Jika lebar layar > 768px (Desktop), buka filter otomatis
+                if (window.innerWidth > 768) {
+                    this.showFilter = false;
+                }
             }
         });
     </script>
