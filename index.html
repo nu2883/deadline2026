@@ -144,7 +144,7 @@
                 <div v-if="showFilter"
                     class="mx-4 md:mx-8 bg-white p-6 rounded-2xl custom-shadow border border-blue-100 mb-8 grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
 
-                                        <div>
+                    <div>
                         <label class="block text-[10px] font-bold text-blue-500 uppercase mb-2">PIC / UIC</label>
                         <select v-model="filterPic"
                             class="w-full bg-slate-100 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-500 py-2">
@@ -201,9 +201,8 @@
                             <tr v-for="task in filteredTasks" :key="task.no"
                                 class="hover:bg-slate-50/50 transition-colors">
                                 <td class="px-8 py-5">
-                                    <div class="font-bold text-slate-700 text-sm">task-{{ String(task.no).padStart(3,
-                                        '0') }}</div>
-                                    <div class="text-xs text-slate-500 font-medium leading-relaxed">{{ task.title }}
+                                    <div class="font-bold text-slate-700 text-xs">id-{{ formatIdHuman(task.no) }}</div>
+                                    <div class="text-sm text-slate-500 font-medium leading-relaxed">{{ task.title }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-5">
@@ -233,13 +232,13 @@
                                                 (task.daysLeft <=3 ? 'Priority' : 'Pending' ) }}</span>
                                     </div>
                                 </td>
-                          <td class="px-4 py-5 text-center" style="min-width: 50px;">
-    <button @click="copyToWA(task)" 
-            style="background:none; border:none; font-size: 1.5rem; cursor:pointer;" 
-            title="Copy format WA">
-        📋
-    </button>
-</td>
+                                <td class="px-4 py-5 text-center" style="min-width: 50px;">
+                                    <button @click="copyToWA(task)"
+                                        style="background:none; border:none; font-size: 1.5rem; cursor:pointer;"
+                                        title="Copy format WA">
+                                        📋
+                                    </button>
+                                </td>
                                 <!-- <td class="px-8 py-5 text-right"><i class="fas fa-ellipsis-v text-slate-300"></i></td> -->
                             </tr>
                             <tr v-if="filteredTasks.length === 0">
@@ -251,46 +250,45 @@
                     </table>
                 </div>
 
-         <div class="md:hidden divide-y divide-slate-100">
-    <div v-for="task in filteredTasks" :key="'mob-'+task.no" class="p-5 flex flex-col gap-3 relative">
-        <div class="flex justify-between items-start">
-            <span class="text-[10px] font-black text-slate-400 uppercase">
-                #task-{{ String(task.no).padStart(3, '0') }}
+                <div class="md:hidden divide-y divide-slate-100">
+              <div v-for="task in filteredTasks" :key="'mob-'+task.no" 
+     class="p-4 flex flex-col gap-2 relative border-b border-slate-50"> <div class="flex justify-between items-start">
+        <span class="text-[10px] font-black text-slate-400 uppercase">
+            #id-{{ formatIdHuman(task.no) }}
+        </span>
+        <div class="flex items-center gap-2">
+            <button @click="copyToWA(task)" class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 rounded-full">
+                <span style="font-size: 14px;">📋</span>
+            </button>
+            <span :class="getUrgencyClass(task.daysLeft)" class="badge-pill text-[10px]">
+                {{ getDaysText(task.daysLeft) }}
             </span>
-            
-            <div class="flex items-center gap-3">
-                <button @click="copyToWA(task)" 
-                        class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 rounded-full active:scale-90 transition-all shadow-sm"
-                        title="Copy ke WA">
-                    <span style="font-size: 14px;">📋</span>
-                </button>
-                <span :class="getUrgencyClass(task.daysLeft)" class="badge-pill">
-                    {{ getDaysText(task.daysLeft) }}
-                </span>
-            </div>
-        </div>
-
-        <h4 class="font-bold text-slate-800 text-sm leading-snug pr-10">
-            {{ task.title }}
-        </h4>
-
-        <div class="flex justify-between items-center text-[10px] font-bold border-t border-slate-50 pt-3">
-            <div class="flex items-center gap-2 text-blue-600 uppercase">
-                <div class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-[8px]">
-                    {{ getInitials(task.user) }}
-                </div>
-                {{ task.user }}
-            </div>
-            <div class="text-slate-400 bg-slate-50 px-2 py-1 rounded">
-                📅 {{ formatDate(task.deadline) }}
-            </div>
         </div>
     </div>
 
-    <div v-if="filteredTasks.length === 0" class="p-10 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
-        Data tidak ditemukan
+    <h4 class="font-bold text-slate-800 text-sm leading-snug pr-10">
+        {{ task.title }}
+    </h4>
+
+    <div class="flex justify-between items-center text-[10px] font-bold mt-1 pt-2 border-t border-slate-50">
+        <div class="flex items-center gap-2 text-blue-600 uppercase">
+            <div class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-[8px]">
+                {{ getInitials(task.user) }}
+            </div>
+            {{ task.user }}
+        </div>
+        <div class="text-slate-400 bg-slate-50 px-2 py-0.5 rounded">
+            📅 {{ formatDate(task.deadline) }}
+        </div>
     </div>
+    <br>
 </div>
+
+                    <div v-if="filteredTasks.length === 0"
+                        class="p-10 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
+                        Data tidak ditemukan
+                    </div>
+                </div>
             </div>
         </div>
         <!-- {{linn}} -->
@@ -356,11 +354,13 @@
                 </div>
             </div>
         </transition>
-        <transition name="fade">
+        <transition name="toast-fade">
             <div v-if="showToast"
-                class="fixed bottom-5 right-5 bg-slate-800 text-white px-6 py-3 rounded-xl shadow-2xl z-[99] flex items-center">
-                <i class="fas fa-check-circle text-green-400 mr-3"></i>
-                <span class="font-bold text-sm">{{ toastMessage }}</span>
+                class="fixed top-5 right-5 bg-slate-800/95 backdrop-blur-sm text-white px-6 py-4 rounded-2xl shadow-2xl z-[9999] flex items-center border border-slate-700">
+                <div class="bg-green-500/20 p-2 rounded-lg mr-3">
+                    <i class="fas fa-check-circle text-green-400"></i>
+                </div>
+                <span class="font-bold text-sm tracking-wide">{{ toastMessage }}</span>
             </div>
         </transition>
 
@@ -428,40 +428,40 @@
                         };
                     }).sort((a, b) => a.daysLeft - b.daysLeft);
                 },
-filteredTasks() {
-    return this.processedTasks.filter(t => {
-        // Tambahkan filterPic di pengecekan filterKosong
-        const filterKosong = this.filterMonth === '' && 
-                             this.filterStart === '' && 
-                             this.filterEnd === '' && 
-                             this.filterPic === '';
+                filteredTasks() {
+                    return this.processedTasks.filter(t => {
+                        // Tambahkan filterPic di pengecekan filterKosong
+                        const filterKosong = this.filterMonth === '' &&
+                            this.filterStart === '' &&
+                            this.filterEnd === '' &&
+                            this.filterPic === '';
 
-        // Tabel menyembunyikan masa lalu jika filter benar-benar kosong
-        if (filterKosong && t.daysLeft < 0) {
-            return false;
-        }
+                        // Tabel menyembunyikan masa lalu jika filter benar-benar kosong
+                        if (filterKosong && t.daysLeft < 0) {
+                            return false;
+                        }
 
-        // 1. Logika Pencarian (Search Bar)
-        const matchSearch = t.title.toLowerCase().includes(this.search.toLowerCase()) ||
+                        // 1. Logika Pencarian (Search Bar)
+                        const matchSearch = t.title.toLowerCase().includes(this.search.toLowerCase()) ||
                             t.user.toLowerCase().includes(this.search.toLowerCase());
-        
-        // 2. Logika Filter Bulan
-        const matchMonth = this.filterMonth === '' || t.dateObj.getMonth() == this.filterMonth;
 
-        // 3. Logika Filter PIC (Dropdown baru)
-        // Kita bandingkan langsung karena value dari dropdown adalah nama PIC
-        const matchPic = this.filterPic === '' || t.user === this.filterPic;
+                        // 2. Logika Filter Bulan
+                        const matchMonth = this.filterMonth === '' || t.dateObj.getMonth() == this.filterMonth;
 
-        // 4. Logika Rentang Tanggal
-        const taskTime = t.dateObj.getTime();
-        const startLimit = this.filterStart ? new Date(this.filterStart).setHours(0, 0, 0, 0) : -Infinity;
-        const endLimit = this.filterEnd ? new Date(this.filterEnd).setHours(23, 59, 59, 999) : Infinity;
-        const matchRange = taskTime >= startLimit && taskTime <= endLimit;
+                        // 3. Logika Filter PIC (Dropdown baru)
+                        // Kita bandingkan langsung karena value dari dropdown adalah nama PIC
+                        const matchPic = this.filterPic === '' || t.user === this.filterPic;
 
-        // Gabungkan semua kondisi (Harus TRUE semua agar tampil)
-        return matchSearch && matchMonth && matchPic && matchRange;
-    });
-},
+                        // 4. Logika Rentang Tanggal
+                        const taskTime = t.dateObj.getTime();
+                        const startLimit = this.filterStart ? new Date(this.filterStart).setHours(0, 0, 0, 0) : -Infinity;
+                        const endLimit = this.filterEnd ? new Date(this.filterEnd).setHours(23, 59, 59, 999) : Infinity;
+                        const matchRange = taskTime >= startLimit && taskTime <= endLimit;
+
+                        // Gabungkan semua kondisi (Harus TRUE semua agar tampil)
+                        return matchSearch && matchMonth && matchPic && matchRange;
+                    });
+                },
                 // Kuncinya di sini: Gunakan processedTasks agar tetap menghitung yang tersembunyi
                 criticalCount() {
                     return this.processedTasks.filter(t => t.daysLeft >= 0 && t.daysLeft <= 3).length;
@@ -471,53 +471,73 @@ filteredTasks() {
                 }
             },
             methods: {
+                formatIdHuman(rawId) {
+                    // 1. Validasi awal: jika kosong, langsung balikkan strip
+                    if (rawId === null || rawId === undefined) return '-';
+
+                    // 2. Paksa jadi string agar .includes dan .split tidak error
+                    const idStr = String(rawId);
+
+                    // 3. Ambil angka timestamp-nya
+                    const timestamp = idStr.includes('-') ? idStr.split('-')[1] : idStr;
+
+                    // 4. Ubah ke objek Date
+                    const date = new Date(Number(timestamp));
+
+                    // 5. Cek jika hasilnya Invalid Date
+                    if (isNaN(date.getTime())) return idStr;
+
+                    // 6. Susun format YYYYMMDDHHmm
+                    const YYYY = date.getFullYear();
+                    const MM = String(date.getMonth() + 1).padStart(2, '0');
+                    const DD = String(date.getDate()).padStart(2, '0');
+                    const HH = String(date.getHours()).padStart(2, '0');
+                    const mm = String(date.getMinutes()).padStart(2, '0');
+
+                    // Ambil 3 angka terakhir milidetik agar ANTI-BENTROK
+                    const ms = String(timestamp).slice(-3);
+
+                    return `${YYYY}${MM}${DD}${HH}${mm}-${ms}`;
+                },
+
                 // Method baru untuk copy ke WhatsApp
-copyToWA(item) {
-    const data = item;
-    
-    // Sesuaikan properti dengan yang ada di template HTML Anda
-    const formattedText = 
-        `👤 PIC/UIC  : ${data.user || '-'}\n` +
-        `📝 Task     : ${data.title || '-'}\n\n` +
-        `📅 Deadline : *${this.formatDate(data.deadline) || '-'}*`;
+                copyToWA(item) {
+                    const data = item;
 
-    const showToast = (message) => {
-        const toast = document.createElement("div");
-        toast.textContent = message;
-        toast.style.position = "fixed";
-        toast.style.bottom = "20px";
-        toast.style.left = "50%";
-        toast.style.transform = "translateX(-50%)";
-        toast.style.backgroundColor = "#333";
-        toast.style.color = "#fff";
-        toast.style.padding = "10px 20px";
-        toast.style.borderRadius = "25px";
-        toast.style.fontSize = "14px";
-        toast.style.zIndex = "9999";
-        toast.style.opacity = "0";
-        toast.style.transition = "opacity 0.3s ease";
-        document.body.appendChild(toast);
-        setTimeout(() => { toast.style.opacity = "1"; }, 10);
-        setTimeout(() => {
-            toast.style.opacity = "0";
-            setTimeout(() => { document.body.removeChild(toast); }, 300);
-        }, 2000);
-    };
+                    const formattedText =
+                        `👤 PIC/UIC  : ${data.user || '-'}\n` +
+                        `📝 Task     : ${data.title || '-'}\n\n` +
+                        `📅 Deadline : *${this.formatDate(data.deadline) || '-'}*`;
 
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(formattedText)
-            .then(() => showToast("✅ Berhasil disalin!"))
-            .catch(() => showToast("❌ Gagal menyalin"));
-    } else {
-        const textArea = document.createElement("textarea");
-        textArea.value = formattedText;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        showToast("✅ Berhasil disalin!");
-    }
-},
+                    // Logic Copy ke Clipboard
+                    const executeCopy = () => {
+                        if (navigator.clipboard && window.isSecureContext) {
+                            return navigator.clipboard.writeText(formattedText);
+                        } else {
+                            const textArea = document.createElement("textarea");
+                            textArea.value = formattedText;
+                            document.body.appendChild(textArea);
+                            textArea.select();
+                            const success = document.execCommand('copy');
+                            document.body.removeChild(textArea);
+                            return success ? Promise.resolve() : Promise.reject();
+                        }
+                    };
+
+                    // Jalankan Copy dan panggil Toast milik VUE
+                    executeCopy()
+                        .then(() => {
+                            // Gunakan state Vue agar ukuran & desain toast seragam
+                            this.toastMessage = "Berhasil disalin!";
+                            this.showToast = true;
+                            setTimeout(() => { this.showToast = false; }, 3000);
+                        })
+                        .catch(() => {
+                            this.toastMessage = "Gagal menyalin!";
+                            this.showToast = true;
+                            setTimeout(() => { this.showToast = false; }, 3000);
+                        });
+                },
                 openTambahModal() {
                     // Menggunakan Timestamp sebagai ID unik sesuai master plan keamanan
                     this.formData.id = 'TRX-' + Date.now();
