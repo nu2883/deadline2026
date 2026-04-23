@@ -35,15 +35,21 @@
         }
 
         /* Animasi Fade & Slide */
-.fade-enter-active, .fade-leave-active {
-    transition: all 0.3s ease;
-}
-.fade-enter, .fade-leave-to {
-    opacity: 0;
-}
-.fade-enter .transform, .fade-leave-to .transform {
-    transform: translateY(20px); /* Di HP slide up, di desktop slide down */
-}
+        .fade-enter-active,
+        .fade-leave-active {
+            transition: all 0.3s ease;
+        }
+
+        .fade-enter,
+        .fade-leave-to {
+            opacity: 0;
+        }
+
+        .fade-enter .transform,
+        .fade-leave-to .transform {
+            transform: translateY(20px);
+            /* Di HP slide up, di desktop slide down */
+        }
     </style>
 </head>
 
@@ -133,10 +139,10 @@
 
                     <div class="flex flex-wrap w-full md:w-auto gap-3">
 
-                     <button @click="showFilter = true"
-    class="flex-1 md:flex-none px-4 py-2.5 bg-white text-slate-600 border border-slate-200 rounded-xl text-sm font-bold flex items-center justify-center shadow-sm hover:bg-slate-50 transition-all">
-    <i class="fas fa-filter mr-2 text-blue-500"></i> Filter
-</button>
+                        <button @click="showFilter = true"
+                            class="flex-1 md:flex-none px-4 py-2.5 bg-white text-slate-600 border border-slate-200 rounded-xl text-sm font-bold flex items-center justify-center shadow-sm hover:bg-slate-50 transition-all">
+                            <i class="fas fa-filter mr-2 text-blue-500"></i> Filter
+                        </button>
 
                         <button @click="ambilData"
                             class="flex-1 md:flex-none bg-white text-blue-600 border border-blue-200 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center shadow-sm hover:bg-blue-50 active:scale-95 transition-all">
@@ -151,7 +157,7 @@
                     </div>
                 </div>
 
-   
+
 
                 <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-left">
@@ -170,8 +176,9 @@
                             <tr v-for="task in filteredTasks" :key="task.no"
                                 class="hover:bg-slate-50/50 transition-colors">
                                 <td class="px-8 py-5">
-                                    <div class="font-bold text-slate-700 text-xs">id-{{ formatIdHuman(task.no) }}</div>
-                                    <div class="text-sm text-slate-500 font-medium leading-relaxed">{{ task.title }}
+                                    <div class="font-bold text-slate-200 text-xs">id-{{ formatIdHuman(task.no) }}</div>
+                                    <div class="text-sm text-slate-700 font-medium leading-relaxed">{{ task.title }}
+                                        <br>
                                     </div>
                                 </td>
                                 <td class="px-6 py-5">
@@ -179,7 +186,7 @@
                                         <div
                                             class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 border border-white shadow-sm">
                                             {{ getInitials(task.user) }}</div>
-                                        <span class="text-xs font-semibold text-slate-600">{{ task.user }}</span>
+                                        <span class="text-xs font-semibold text-blue-600">{{ task.user }}</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-5">
@@ -201,12 +208,31 @@
                                                 (task.daysLeft <=3 ? 'Priority' : 'Pending' ) }}</span>
                                     </div>
                                 </td>
-                                <td class="px-4 py-5 text-center" style="min-width: 50px;">
-                                    <button @click="copyToWA(task)"
-                                        style="background:none; border:none; font-size: 1.5rem; cursor:pointer;"
-                                        title="Copy format WA">
-                                        📋
-                                    </button>
+                                <td class="px-4 py-5 text-center" style="min-width: 120px;">
+                                    <div class="flex items-center justify-center gap-2">
+                     <button @click="bukaEdit(task)"
+    class="flex items-center justify-center p-2 text-blue-600 transition-colors duration-200 rounded-lg hover:bg-blue-100 focus:outline-none"
+    title="Edit Data">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+    </svg>
+</button>
+
+                                        <button @click="copyToWA(task)"
+                                            class="flex items-center justify-center p-2 text-green-600 transition-colors duration-200 rounded-lg hover:bg-green-100 focus:outline-none"
+                                            title="Copy format WA">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </td>
                                 <!-- <td class="px-8 py-5 text-right"><i class="fas fa-ellipsis-v text-slate-300"></i></td> -->
                             </tr>
@@ -218,40 +244,62 @@
                         </tbody>
                     </table>
                 </div>
-
+<!-- {{filteredTasks}} -->
                 <div class="md:hidden divide-y divide-slate-100">
-              <div v-for="task in filteredTasks" :key="'mob-'+task.no" 
-     class="p-4 flex flex-col gap-2 relative border-b border-slate-50"> <div class="flex justify-between items-start">
-        <span class="text-[10px] font-black text-slate-400 uppercase">
-            #id-{{ formatIdHuman(task.no) }}
-        </span>
-        <div class="flex items-center gap-2">
-            <button @click="copyToWA(task)" class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-600 rounded-full">
-                <span style="font-size: 14px;">📋</span>
-            </button>
-            <span :class="getUrgencyClass(task.daysLeft)" class="badge-pill text-[10px]">
-                {{ getDaysText(task.daysLeft) }}
-            </span>
-        </div>
-    </div>
+                    <div v-for="task in filteredTasks" :key="'mob-'+task.no"
+                        class="p-4 flex flex-col gap-2 relative border-b border-slate-50">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[10px] font-black text-slate-200 uppercase">
+                                #id-{{ formatIdHuman(task.no) }}
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <button @click="bukaEdit(task)"
+                                    class="w-8 h-8 flex items-center justify-center bg-amber-50 text-blue-600 rounded-full hover:bg-amber-100 transition-colors"
+                                    title="Edit Task">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                </button>
 
-    <h4 class="font-bold text-slate-800 text-sm leading-snug pr-10">
-        {{ task.title }}
-    </h4>
+                                <button @click="copyToWA(task)"
+                                    class="w-8 h-8 flex items-center justify-center bg-blue-50 text-green-600 rounded-full hover:bg-blue-100 transition-colors"
+                                    title="Copy format WA">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                </button>
 
-    <div class="flex justify-between items-center text-[10px] font-bold mt-1 pt-2 border-t border-slate-50">
-        <div class="flex items-center gap-2 text-blue-600 uppercase">
-            <div class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-[8px]">
-                {{ getInitials(task.user) }}
-            </div>
-            {{ task.user }}
-        </div>
-        <div class="text-slate-500 bg-slate-100 px-2 py-0.5 rounded text-sm">
-            📅 {{ formatDate(task.deadline) }}
-        </div>
-    </div>
-    <br>
-</div>
+                                <span :class="getUrgencyClass(task.daysLeft)" class="badge-pill text-[10px]">
+                                    {{ getDaysText(task.daysLeft) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <h4 class="font-bold text-slate-800 text-sm leading-snug pr-10">
+                            {{ task.title }}
+                        </h4>
+
+                        <div
+                            class="flex justify-between items-center text-[10px] font-bold mt-1 pt-2 border-t border-slate-50">
+                            <div class="flex items-center gap-2 text-blue-600 uppercase">
+                                <div
+                                    class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-[8px]">
+                                    {{ getInitials(task.user) }}
+                                </div>
+                                {{ task.user }}
+                            </div>
+                            <div class="text-slate-500 bg-slate-100 px-2 py-0.5 rounded text-sm">
+                                📅 {{ formatDate(task.deadline) }}
+                            </div>
+                        </div>
+                        <br>
+                    </div>
 
                     <div v-if="filteredTasks.length === 0"
                         class="p-10 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
@@ -334,72 +382,141 @@
             </div>
         </transition>
 
-<transition name="fade">
-    <div v-if="showFilter"
-        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <transition name="fade">
+            <div v-if="showFilter"
+                class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
 
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+                <div
+                    class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform transition-all border border-slate-100">
 
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <h3 class="text-lg font-bold text-slate-800">Filter Data</h3>
-                <button @click="showFilter = false" class="text-slate-400 hover:text-slate-600 transition-colors">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <div class="p-6 space-y-4">
-                <div>
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">
-                        PIC / UIC
-                    </label>
-                    <select  v-model="filterPic"
-                        class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none appearance-none bg-no-repeat bg-[right_1rem_center] bg-[length:1em_1em]"
-                        style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E');">
-                        <option class="text-blue-700" value="">Semua PIC</option>
-                        <option class="text-blue-700" v-for="person in listPic" :key="person" :value="person">{{ person }}</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">
-                        Pilih Bulan
-                    </label>
-                    <select v-model="filterMonth"
-                        class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none appearance-none bg-no-repeat bg-[right_1rem_center] bg-[length:1em_1em]"
-                        style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E');">
-                        <option value="">Semua Bulan</option>
-                        <option v-for="(m, index) in months" :key="index" :value="index">{{ m }}</option>
-                    </select>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Mulai</label>
-                        <input type="date" v-model="filterStart"
-                            class="w-full border border-slate-200 rounded-lg px-4 py-2 text-xs font-bold text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+                    <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                        <h3 class="text-lg font-bold text-slate-800">Filter Data</h3>
+                        <button @click="showFilter = false"
+                            class="text-slate-400 hover:text-slate-600 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Akhir</label>
-                        <input type="date" v-model="filterEnd"
-                            class="w-full border border-slate-200 rounded-lg px-4 py-2 text-xs font-bold text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">
+                                PIC / UIC
+                            </label>
+                            <select v-model="filterPic"
+                                class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none appearance-none bg-no-repeat bg-[right_1rem_center] bg-[length:1em_1em]"
+                                style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E');">
+                                <option class="text-blue-700" value="">Semua PIC</option>
+                                <option class="text-blue-700" v-for="person in listPic" :key="person" :value="person">{{
+                                    person }}</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">
+                                Pilih Bulan
+                            </label>
+                            <select v-model="filterMonth"
+                                class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none appearance-none bg-no-repeat bg-[right_1rem_center] bg-[length:1em_1em]"
+                                style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E');">
+                                <option value="">Semua Bulan</option>
+                                <option v-for="(m, index) in months" :key="index" :value="index">{{ m }}</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Mulai</label>
+                                <input type="date" v-model="filterStart"
+                                    class="w-full border border-slate-200 rounded-lg px-4 py-2 text-xs font-bold text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Akhir</label>
+                                <input type="date" v-model="filterEnd"
+                                    class="w-full border border-slate-200 rounded-lg px-4 py-2 text-xs font-bold text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
+                        <button @click="resetFilter"
+                            class="flex-1 px-4 py-2.5 border border-orange-200 text-orange-600 rounded-xl text-sm font-bold hover:bg-white transition-all flex items-center justify-center gap-2">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                        <button @click="showFilter = false"
+                            class="flex-[1.5] px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all">
+                            Terapkan Filter
+                        </button>
                     </div>
                 </div>
             </div>
+        </transition>
 
-            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
-                <button @click="resetFilter"
-                    class="flex-1 px-4 py-2.5 border border-orange-200 text-orange-600 rounded-xl text-sm font-bold hover:bg-white transition-all flex items-center justify-center gap-2">
-                    <i class="fas fa-undo"></i> Reset
-                </button>
-                <button @click="showFilter = false"
-                    class="flex-[1.5] px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all">
-                    Terapkan Filter
-                </button>
+
+
+        <transition name="fade">
+            <div v-if="showModalEdit"
+                class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+
+                <div
+                    class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+
+                    <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                        <h3 class="text-lg font-bold text-slate-800">Edit Kegiatan</h3>
+                        <button @click="showModalEdit = false" class="text-slate-400 hover:text-slate-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-6 space-y-4">
+                        <!-- {{formDataEdit}} -->
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">
+                                ID Transaksi
+                            </label>
+                            <input type="text" v-model="formDataEdit.id" readonly
+                                class="w-full bg-slate-50 border border-slate-100 rounded-lg px-4 py-2.5 text-sm font-mono text-slate-500 cursor-not-allowed outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">
+                                Nama Kegiatan
+                            </label>
+                            <input type="text" v-model="formDataEdit.nama_kegiatan"
+                                class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">
+                                PIC
+                            </label>
+                            <input type="text" v-model="formDataEdit.pic"
+                                class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">
+                                Tanggal Deadline
+                            </label>
+                            <input type="date" v-model="formDataEdit.tgl_deadline"
+                                class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
+                        <button @click="showModalEdit = false"
+                            class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-white transition-all">
+                            Batal
+                        </button>
+                        <button @click="updateData"
+                            class="flex-1 px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all">
+                            Update Data
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-</transition>
-
+        </transition>
 
     </div>
 
@@ -428,6 +545,14 @@
                 showToast: false,
                 toastMessage: '',
                 filterPic: '',
+                // State BARU khusus untuk modal edit
+                showModalEdit: false,
+                formDataEdit: {
+                    id: '',
+                    nama_kegiatan: '',
+                    pic: '',
+                    tgl_deadline: ''
+                },
             },
             computed: {
                 listPic() {
@@ -507,6 +632,83 @@
                 }
             },
             methods: {
+                
+                                updateData() {
+                    if (!this.formDataEdit.nama_kegiatan || !this.formDataEdit.pic || !this.formDataEdit.tgl_deadline) {
+                        alert('Mohon lengkapi semua data sebelum melakukan update.');
+                        return;
+                    }
+
+                    var waktu1 = this.formDataEdit.id;
+                    var dateObj = new Date(waktu1);
+                    var options = { timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit" };
+                    var tanggalIndonesia = new Intl.DateTimeFormat("id-ID", options).format(dateObj);
+                    var parts = tanggalIndonesia.split("/");
+                    var tanggalInput = `${parts[2]}-${parts[1]}-${parts[0]}`;
+
+                    
+
+                    var lin = `https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec?action=update&table=data2026&id=${waktu1}&data={"nama_kegiatan":"'${this.formDataEdit.nama_kegiatan}","pic":"'${this.formDataEdit.pic}","tgl_deadline":"${this.formDataEdit.tgl_deadline}"}`;
+
+                    // console.log(lin);
+                    let app = this;
+                    app.loading = true;
+                    app.showModalEdit = false;
+                    $.ajax({
+                        type: "GET",
+                        url: lin,
+                        crossDomain: true,
+                        dataType: "jsonp",
+                        complete: function () {
+                            // --- LOGIKA RESET & CLOSE ---
+                            app.formDataEdit.nama_kegiatan = '';
+                            app.formDataEdit.pic = '';
+                            app.formDataEdit.tgl_deadline = '';
+
+
+                            // --- PEMANGGILAN TOAST DISINI ---
+                            app.showSuccessToast("Data Berhasil di UPDATE!");
+                            this.filteredTasks = [];
+                            setTimeout(() => {
+                                if (typeof app.ambilData === "function") {
+                                    app.ambilData();
+                                }
+                                app.loading = false;
+                                console.log("Proses Update Berhasil Selesai");
+                            }, 1000);
+                        }
+                    });
+                },
+
+    bukaEdit(task) {
+    let formattedDate = "";
+    
+    if (task.deadline) {
+        // 1. Ubah string UTC menjadi objek Date asli JavaScript
+        const dateObj = new Date(task.deadline);
+        
+        // 2. Ambil komponen tanggal, bulan, dan tahun sesuai zona waktu lokal (WIB)
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0'); // Bulan dimulai dari 0
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        
+        // 3. Gabungkan menjadi format yang diterima input HTML (YYYY-MM-DD)
+        formattedDate = `${year}-${month}-${day}`;
+    }
+
+    this.formDataEdit = {
+        id: task.no,
+        nama_kegiatan: task.title,
+        pic: task.user,
+        tgl_deadline: formattedDate 
+    };
+    
+    this.showModalEdit = true;
+},
+    // Fungsi format ID (jika belum ada) agar tampilan di modal tetap cantik
+    formatIdHuman(no) {
+        return no.toString().slice(-5); // Contoh: ambil 5 digit terakhir saja
+    },
                 formatIdHuman(rawId) {
                     // 1. Validasi awal: jika kosong, langsung balikkan strip
                     if (rawId === null || rawId === undefined) return '-';
@@ -537,43 +739,51 @@
                 },
 
                 // Method baru untuk copy ke WhatsApp
-                copyToWA(item) {
-                    const data = item;
+             copyToWA(item) {
+    const data = item;
 
-                    const formattedText =
-                        `👤 PIC/UIC  : ${data.user || '-'}\n` +
-                        `📝 Task     : ${data.title || '-'}\n\n` +
-                        `📅 Deadline : *${this.formatDate(data.deadline) || '-'}*`;
+    // Template string disesuaikan dengan permintaan:
+    const formattedText = 
+        `*👤 PIC/UIC  :*\n` +
+        `${data.user || '-'}\n` +
+        `*📝 Task     :*\n` +
+        `${data.title || '-'}\n\n` +
+        `📅 Deadline : \n` +
+        `*${this.formatDate(data.deadline) || '-'}*`;
 
-                    // Logic Copy ke Clipboard
-                    const executeCopy = () => {
-                        if (navigator.clipboard && window.isSecureContext) {
-                            return navigator.clipboard.writeText(formattedText);
-                        } else {
-                            const textArea = document.createElement("textarea");
-                            textArea.value = formattedText;
-                            document.body.appendChild(textArea);
-                            textArea.select();
-                            const success = document.execCommand('copy');
-                            document.body.removeChild(textArea);
-                            return success ? Promise.resolve() : Promise.reject();
-                        }
-                    };
+    // Logic Copy ke Clipboard
+    const executeCopy = () => {
+        if (navigator.clipboard && window.isSecureContext) {
+            return navigator.clipboard.writeText(formattedText);
+        } else {
+            const textArea = document.createElement("textarea");
+            textArea.value = formattedText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                const success = document.execCommand('copy');
+                document.body.removeChild(textArea);
+                return success ? Promise.resolve() : Promise.reject();
+            } catch (err) {
+                document.body.removeChild(textArea);
+                return Promise.reject(err);
+            }
+        }
+    };
 
-                    // Jalankan Copy dan panggil Toast milik VUE
-                    executeCopy()
-                        .then(() => {
-                            // Gunakan state Vue agar ukuran & desain toast seragam
-                            this.toastMessage = "Berhasil disalin!";
-                            this.showToast = true;
-                            setTimeout(() => { this.showToast = false; }, 3000);
-                        })
-                        .catch(() => {
-                            this.toastMessage = "Gagal menyalin!";
-                            this.showToast = true;
-                            setTimeout(() => { this.showToast = false; }, 3000);
-                        });
-                },
+    // Jalankan Copy dan panggil Toast milik VUE
+    executeCopy()
+        .then(() => {
+            this.toastMessage = "Format WA berhasil disalin!";
+            this.showToast = true;
+            setTimeout(() => { this.showToast = false; }, 3000);
+        })
+        .catch(() => {
+            this.toastMessage = "Gagal menyalin!";
+            this.showToast = true;
+            setTimeout(() => { this.showToast = false; }, 3000);
+        });
+},
                 openTambahModal() {
                     // Menggunakan Timestamp sebagai ID unik sesuai master plan keamanan
                     this.formData.id = 'TRX-' + Date.now();
@@ -606,7 +816,7 @@
                     var parts = tanggalIndonesia.split("/");
                     var tanggalInput = `${parts[2]}-${parts[1]}-${parts[0]}`;
 
-                    var lin = `https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec?action=insert&table=data2026&data={"no":${waktu1},"tanggal":"${tanggalInput}","nama_kegiatan":"'${this.formData.nama_kegiatan}","pic":"'${this.formData.pic}","tgl_deadline":"${this.formData.tgl_deadline}"}`;
+                    var lin = `https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec?action=insert&table=data2026&data={"id":${waktu1},"tanggal":"${tanggalInput}","nama_kegiatan":"'${this.formData.nama_kegiatan}","pic":"'${this.formData.pic}","tgl_deadline":"${this.formData.tgl_deadline}"}`;
 
                     let app = this;
                     app.loading = true;
@@ -643,7 +853,7 @@
                     let app = this;
                     $.getJSON(url, function (json) {
                         app.tasks = json.data.map(item => ({
-                            no: item.no,
+                            no: item.id,
                             title: item["nama_kegiatan"],
                             user: item.pic,
                             deadline: item["tgl_deadline"]
@@ -665,12 +875,14 @@
                     return new Date(dateStr).toLocaleDateString('id-ID', options);
                 },
                 getUrgencyClass(days) {
-                    if (days < 0) return 'bg-green-100 text-green-600';
-                    if (days === 0) return 'bg-red-600 text-white animate-pulse';;
-                    if (days <= 1) return 'bg-red-500 text-white';
-                    if (days <= 2) return 'bg-red-400 text-white';
-                    if (days <= 3) return 'bg-red-300 text-white';
-                    return 'bg-blue-100 text-blue-600';
+                    if (days < 0) return 'bg-emerald-200 text-emerald-800'; // selesai (aman, soft tapi jelas)
+                    if (days === 0) return 'bg-red-700 text-white animate-pulse'; // HARI H - sangat bahaya
+                    if (days <= 1) return 'bg-red-600 text-white';
+                    if (days <= 2) return 'bg-red-500 text-white';
+                    if (days <= 3) return 'bg-orange-500 text-white';
+                    if (days <= 4) return 'bg-amber-400 text-black';
+                    if (days <= 5) return 'bg-yellow-300 text-black';
+                    return 'bg-sky-200 text-sky-800'; // masih jauh
                 },
                 getDaysText(days) {
                     if (days < 0) return 'Selesai';
