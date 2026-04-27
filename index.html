@@ -108,7 +108,7 @@
                         </div>
                         <div>
                             <p class="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tight">
-                                K r i t i s</p>
+                                Mendesak</p>
                             <h3 class="text-lg md:text-3xl font-black text-slate-800 leading-none">{{ criticalCount }}
                             </h3>
                         </div>
@@ -329,8 +329,7 @@
                     <div class="p-6 space-y-4">
                         <div>
                             <label
-                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">ID
-                                Transaksi (Otomatis)</label>
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">ID (Otomatis)</label>
                             <input type="text" v-model="formData.id" readonly
                                 class="w-full bg-slate-50 border border-slate-100 rounded-lg px-4 py-2.5 text-sm font-mono text-slate-500 cursor-not-allowed outline-none">
                         </div>
@@ -488,7 +487,7 @@
                         <!-- {{formDataEdit}} -->
                         <div>
                             <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">
-                                ID Transaksi
+                                ID
                             </label>
                             <input type="text" v-model="formDataEdit.id" readonly
                                 class="w-full bg-slate-50 border border-slate-100 rounded-lg px-4 py-2.5 text-sm font-mono text-slate-500 cursor-not-allowed outline-none">
@@ -658,10 +657,7 @@
                 }
             },
             methods: {
-                // updateData() {
-                //     alert('123');
-                //     this.filteredTasks = [];
-                // },
+                
                 updateData() {
                     if (!this.formDataEdit.nama_kegiatan || !this.formDataEdit.pic || !this.formDataEdit.tgl_deadline) {
                         alert('Mohon lengkapi semua data sebelum melakukan update.');
@@ -843,6 +839,8 @@
                         alert('Mohon lengkapi semua data sebelum menyimpan.');
                         return;
                     }
+
+                    this.tasks = [];
 
                     // 1. Penanganan Tanggal tetap sama
                     var waktu1 = Date.now();
