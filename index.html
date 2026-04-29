@@ -418,7 +418,7 @@
 
                     <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
                         <button @click="showModal = false"
-                            class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-white transition-all">
+                            class="bg-red-300 flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-white transition-all">
                             Batal
                         </button>
                         <button @click="simpanData"
@@ -712,7 +712,7 @@
                     <!-- FOOTER -->
                     <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
                         <button @click="showModalEdit = false"
-                            class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-white transition-all">
+                            class="bg-red-300 flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-white transition-all">
                             Batal
                         </button>
                         <button @click="updateData"
@@ -758,7 +758,7 @@
 
                     <div class="px-5 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
                         <button @click="showModalEditDetail = false"
-                            class="flex-1 py-2 text-xs border border-slate-200 rounded-xl text-slate-500 hover:bg-white">Batal</button>
+                            class="bg-red-300 flex-1 py-2 text-xs border border-slate-200 rounded-xl text-slate-500 hover:bg-white">Batal</button>
                         <button @click="simpanEditDetail"
                             class="flex-1 py-2 text-xs bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700">Simpan</button>
                     </div>
@@ -849,7 +849,7 @@
                                 </div>
                                 <div class="flex gap-2">
                                     <button @click="showAddDetailForm = false"
-                                        class="flex-1 py-1.5 text-xs border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50">Batal</button>
+                                        class="bg-red-300 flex-1 py-1.5 text-xs border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50">Batal</button>
                                     <button @click="addDetail"
                                         class="flex-1 py-1.5 text-xs bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700">Simpan</button>
                                 </div>
@@ -911,7 +911,7 @@
                     <!-- Footer tetap di bawah -->
                     <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
                         <button @click="showModalShow = false"
-                            class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-white transition-all">
+                            class="bg-red-300 flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-white transition-all">
                             Batal
                         </button>
 
@@ -1443,6 +1443,8 @@ bukaEdit(task) {
     
     if(task.details.length > 0){
 this.detail = true;
+    }else{
+        this.detail = false;
     }
      
 
