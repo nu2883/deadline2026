@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voyager Dashboard - Real-Time Monitor</title>
+    <title>Deadline Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -33,6 +33,23 @@
         select {
             cursor: pointer;
         }
+
+        /* Animasi Fade & Slide */
+        .fade-enter-active,
+        .fade-leave-active {
+            transition: all 0.3s ease;
+        }
+
+        .fade-enter,
+        .fade-leave-to {
+            opacity: 0;
+        }
+
+        .fade-enter .transform,
+        .fade-leave-to .transform {
+            transform: translateY(20px);
+            /* Di HP slide up, di desktop slide down */
+        }
     </style>
 </head>
 
@@ -40,7 +57,7 @@
 
     <div id="app" class="min-h-screen pb-10">
 
-        <div class="bg-white border-b border-slate-200 sticky top-0 z-30">
+        <div class="bg-white border-b border-slate-200 sticky top-0 z-40">
             <div class="max-w-[1400px] mx-auto h-16 px-4 md:px-8 flex items-center justify-between">
                 <div class="flex items-center w-full max-w-md">
                     <div class="relative w-full">
@@ -55,8 +72,8 @@
                     <div class="flex items-center gap-2">
                         <div
                             class="w-9 h-9 bg-slate-600 rounded-full flex items-center justify-center text-white text-xs font-bold border-2 border-white">
-                            JS</div>
-                        <i class="fas fa-chevron-down text-[10px] text-slate-400 hidden md:block"></i>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -65,91 +82,91 @@
         <div class="max-w-[1400px] mx-auto p-4 md:p-8">
 
 
+            <div class="grid grid-cols-3 md:grid-cols-3 gap-3 md:gap-6 mb-6">
+                <div @click="setFilter('all')" :class="filterStatus === 'all' ? 'ring-2 ring-blue-500' : ''"
+                    class="cursor-pointer bg-white p-3 md:p-6 rounded-2xl custom-shadow border border-slate-100 flex flex-col md:flex-row items-center md:justify-between text-center md:text-left">
+                    <div class="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+                        <div
+                            class="w-10 h-10 md:w-12 md:h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-100">
+                            <i class="fas fa-clipboard-list text-sm md:text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tight">Total
+                            </p>
+                            <h3 class="text-lg md:text-3xl font-black text-slate-800 leading-none">{{
+                                filteredTasks.length }}</h3>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div
-                    class="bg-white p-6 rounded-2xl custom-shadow flex items-center justify-between border border-slate-100">
-                    <div class="flex items-center gap-4">
+                <div @click="setFilter('critical')" :class="filterStatus === 'critical' ? 'ring-2 ring-red-500' : ''"
+                    class="cursor-pointer bg-white p-3 md:p-6 rounded-2xl custom-shadow border border-slate-100 flex flex-col md:flex-row items-center md:justify-between text-center md:text-left">
+                    <div class="flex flex-col md:flex-row items-center gap-2 md:gap-4">
                         <div
-                            class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
-                            <i class="fas fa-clipboard-list text-xl"></i></div>
+                            class="w-10 h-10 md:w-12 md:h-12 bg-red-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-red-100">
+                            <i class="fas fa-exclamation-circle text-sm md:text-xl"></i>
+                        </div>
                         <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Tugas Terfilter</p>
-                            <h3 class="text-3xl font-black text-slate-800">{{ filteredTasks.length }}</h3>
+                            <p class="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tight">
+                                Mendesak</p>
+                            <h3 class="text-lg md:text-3xl font-black text-slate-800 leading-none">{{ criticalCount }}
+                            </h3>
                         </div>
                     </div>
                 </div>
-                <div
-                    class="bg-white p-6 rounded-2xl custom-shadow flex items-center justify-between border border-slate-100">
-                    <div class="flex items-center gap-4">
+
+                <div @click="setFilter('done')" :class="filterStatus === 'done' ? 'ring-2 ring-green-500' : ''"
+                    class="cursor-pointer bg-white p-3 md:p-6 rounded-2xl custom-shadow border border-slate-100 flex flex-col md:flex-row items-center md:justify-between text-center md:text-left">
+                    <div class="flex flex-col md:flex-row items-center gap-2 md:gap-4">
                         <div
-                            class="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-red-200">
-                            <i class="fas fa-exclamation-circle text-xl"></i></div>
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Kritis Terfilter</p>
-                            <h3 class="text-3xl font-black text-slate-800">{{ criticalCount }}</h3>
+                            class="w-10 h-10 md:w-12 md:h-12 bg-green-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-green-100">
+                            <i class="fas fa-check-circle text-sm md:text-xl"></i>
                         </div>
-                    </div>
-                </div>
-                <div
-                    class="bg-white p-6 rounded-2xl custom-shadow flex items-center justify-between border border-slate-100">
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-green-200">
-                            <i class="fas fa-check-circle text-xl"></i></div>
                         <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Selesai Terfilter</p>
-                            <h3 class="text-3xl font-black text-slate-800">{{ doneCount }}</h3>
+                            <p class="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-tight">Done
+                            </p>
+                            <h3 class="text-lg md:text-3xl font-black text-slate-800 leading-none">{{ doneCount }}</h3>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-3xl custom-shadow overflow-hidden border border-slate-100">
-                <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <h2 class="text-xl font-extrabold text-slate-800 tracking-tight uppercase">Monitoring Deadline
-                        Real-Time</h2>
-                    <button @click="ambilData"
-                        class="w-full md:w-auto bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center shadow-lg active:scale-95 transition-all">
-                        <i class="fas fa-sync-alt mr-2" :class="{'animate-spin': loading}"></i> Sync Data
-                    </button>
-                </div>
-
+            <div class="bg-white rounded-3xl custom-shadow border border-slate-100">
                 <div
-                    class="mx-5 bg-white p-4 rounded-2xl custom-shadow border border-slate-100 mb-8 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Pilih Bulan</label>
-                        <select v-model="filterMonth"
-                            class="w-full bg-slate-50 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-500 py-2">
-                            <option value="">Semua Bulan</option>
-                            <option v-for="(m, index) in months" :key="index" :value="index">{{ m }}</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Rentang Mulai</label>
-                        <input type="date" v-model="filterStart"
-                            class="w-full bg-slate-50 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-500 py-2">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Rentang Akhir</label>
-                        <input type="date" v-model="filterEnd"
-                            class="w-full bg-slate-50 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-500 py-2">
-                    </div>
-                    <div>
-                        <button @click="resetFilter"
-                            class="w-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold py-2 rounded-lg text-sm transition-all active:scale-95">
-                            <i class="fas fa-undo mr-2"></i> Reset Filter
+                    class=" sticky top-16 z-40 bg-white border-b border-slate-100 shadow-sm p-1 md:p-1 px-2 flex flex-col md:flex-row justify-between items-center">
+                    <h2 class="text-xl font-extrabold text-slate-800 tracking-tight uppercase">
+                        Monitoring Deadline
+                    </h2>
+
+                    <div class="flex flex-wrap w-full md:w-auto gap-3">
+
+                        <button @click="showFilter = true"
+                            class="flex-1 md:flex-none px-4 py-2.5 bg-white text-slate-600 border border-slate-200 rounded-xl text-sm font-bold flex items-center justify-center shadow-sm hover:bg-slate-50 transition-all">
+                            <i class="fas fa-filter mr-2 text-blue-500"></i> Filter
                         </button>
+
+                        <button @click="ambilData"
+                            class="flex-1 md:flex-none bg-white text-blue-600 border border-blue-200 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center shadow-sm hover:bg-blue-50 active:scale-95 transition-all">
+                            <i class="fas fa-sync-alt mr-2" :class="{'animate-spin': loading}"></i> Sync
+                        </button>
+
+                        <button @click="openTambahModal"
+                            class="flex-[2] md:flex-none bg-indigo-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all">
+                            <i class="fas fa-plus mr-2"></i> Rekam
+                        </button>
+
                     </div>
                 </div>
 
-                <div class="hidden md:block overflow-x-auto">
+
+
+                <div class="overflow-x-auto hidden md:block">
                     <table class="w-full text-left">
                         <thead>
                             <tr
                                 class="bg-slate-50/50 text-slate-400 text-[11px] font-bold uppercase tracking-widest border-y border-slate-100">
                                 <th class="px-8 py-4">Task / Proyek</th>
-                                <th class="px-6 py-4">Assignee</th>
+                                <th class="px-6 py-4">PIC / UIC</th>
                                 <th class="px-6 py-4">Target Deadline</th>
                                 <th class="px-6 py-4">Sisa Waktu</th>
                                 <th class="px-6 py-4">Status</th>
@@ -157,12 +174,12 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            <tr v-for="task in filteredTasks" :key="task.no"
+                            <tr @dblclick="showModalShow1(task)" v-for="task in filteredTasks" :key="task.no"
                                 class="hover:bg-slate-50/50 transition-colors">
                                 <td class="px-8 py-5">
-                                    <div class="font-bold text-slate-700 text-sm">task-{{ String(task.no).padStart(3,
-                                        '0') }}</div>
-                                    <div class="text-xs text-slate-500 font-medium leading-relaxed">{{ task.title }}
+                                    <div class="font-bold text-slate-200 text-xs">id-{{ formatIdHuman(task.no) }}</div>
+                                    <div class="text-sm text-slate-700 font-medium leading-relaxed">{{ task.title }}
+                                        <br>
                                     </div>
                                 </td>
                                 <td class="px-6 py-5">
@@ -170,7 +187,7 @@
                                         <div
                                             class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 border border-white shadow-sm">
                                             {{ getInitials(task.user) }}</div>
-                                        <span class="text-xs font-semibold text-slate-600">{{ task.user }}</span>
+                                        <span class="text-xs font-semibold text-blue-600">{{ task.user }}</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-5">
@@ -178,20 +195,80 @@
                                         }}</span>
                                 </td>
                                 <td class="px-6 py-5">
-                                    <span :class="getUrgencyClass(task.daysLeft)" class="badge-pill">{{
+                                    <span :class="getUrgencyClass(task.daysLeft)"
+                                        class="badge-pill whitespace-nowrap">{{
                                         getDaysText(task.daysLeft) }}</span>
                                 </td>
                                 <td class="px-6 py-5">
                                     <div class="flex items-center gap-2">
-                                        <i v-if="task.daysLeft < 0"
-                                            class="fas fa-check-circle text-green-500 text-lg"></i>
-                                        <i v-else-if="task.daysLeft <= 3" class="fas fa-star text-blue-500 text-lg"></i>
-                                        <div v-else class="w-5 h-5 border-2 border-slate-300 rounded-full"></div>
-                                        <span class="text-xs font-bold text-slate-600">{{ task.daysLeft < 0 ? 'Done' :
-                                                (task.daysLeft <=3 ? 'Priority' : 'Pending' ) }}</span>
+                                        <!-- Kalau ada details, tampilkan progress -->
+                                        <template v-if="task.details && task.details.length > 0">
+                                            <div class="flex flex-col gap-1 w-full">
+                                                <div class="flex items-center gap-2">
+                                                    <i v-if="task.daysLeft < 0"
+                                                        class="fas fa-check-circle text-green-500 text-lg"></i>
+                                                    <i v-else-if="task.daysLeft <= 3"
+                                                        class="fas fa-star text-blue-500 text-lg"></i>
+                                                    <div v-else class="w-5 h-5 border-2 border-slate-300 rounded-full">
+                                                    </div>
+                                                    <span class="text-xs font-bold text-slate-600">{{ task.daysLeft < 0
+                                                            ? 'Done' : (task.daysLeft <=3 ? 'Priority' : 'Pending' )
+                                                            }}</span>
+                                                            <span class="text-xs font-bold ml-auto"
+                                                                :class="calcProgress(task.details) >= 100 ? 'text-green-600' : 'text-slate-400'">
+                                                                {{ calcProgress(task.details) }}%
+                                                            </span>
+                                                </div>
+                                                <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                                                    <div class="h-full rounded-full transition-all duration-300"
+                                                        :class="calcProgress(task.details) >= 100 ? 'bg-green-500' : calcProgress(task.details) > 50 ? 'bg-indigo-500' : 'bg-amber-400'"
+                                                        :style="{ width: calcProgress(task.details) + '%' }">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </template>
+
+                                        <!-- Kalau tidak ada details, tampilkan status biasa -->
+                                        <template v-else>
+                                            <i v-if="task.daysLeft < 0"
+                                                class="fas fa-check-circle text-green-500 text-lg"></i>
+                                            <i v-else-if="task.daysLeft <= 3"
+                                                class="fas fa-star text-blue-500 text-lg"></i>
+                                            <div v-else class="w-5 h-5 border-2 border-slate-300 rounded-full"></div>
+                                            <span class="text-xs font-bold text-slate-600">{{ task.daysLeft < 0 ? 'Done'
+                                                    : (task.daysLeft <=3 ? 'Priority' : 'Pending' ) }}</span>
+                                        </template>
                                     </div>
                                 </td>
-                                <td class="px-8 py-5 text-right"><i class="fas fa-ellipsis-v text-slate-300"></i></td>
+                                <td class="px-4 py-5 text-center" style="min-width: 120px;">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <button @click="bukaEdit(task)"
+                                            class="flex items-center justify-center p-2 text-blue-600 transition-colors duration-200 rounded-lg hover:bg-blue-100 focus:outline-none"
+                                            title="Edit Data">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7">
+                                                </path>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z">
+                                                </path>
+                                            </svg>
+                                        </button>
+
+                                        <button @click="copyToWA(task)"
+                                            class="flex items-center justify-center p-2 text-green-600 transition-colors duration-200 rounded-lg hover:bg-green-100 focus:outline-none"
+                                            title="Copy format WA">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                                <!-- <td class="px-8 py-5 text-right"><i class="fas fa-ellipsis-v text-slate-300"></i></td> -->
                             </tr>
                             <tr v-if="filteredTasks.length === 0">
                                 <td colspan="6"
@@ -201,24 +278,647 @@
                         </tbody>
                     </table>
                 </div>
-
-                <div class="md:hidden divide-y divide-slate-100">
-                    <div v-for="task in filteredTasks" :key="'mob-'+task.no" class="p-5 flex flex-col gap-3">
+                <!-- {{filteredTasks}} -->
+                <div class="md:hidden divide-y divide-slate-100 ">
+                    <div @dblclick="showModalShow1(task)" v-for="task in filteredTasks" :key="'mob-'+task.no"
+                        class="p-4 flex flex-col gap-2 relative border-b border-slate-50">
                         <div class="flex justify-between items-start">
-                            <span class="text-[10px] font-black text-slate-400 uppercase">#task-{{
-                                String(task.no).padStart(3, '0') }}</span>
-                            <span :class="getUrgencyClass(task.daysLeft)" class="badge-pill">{{
-                                getDaysText(task.daysLeft) }}</span>
+                            <span class="text-[10px] font-black text-slate-200 uppercase">
+                                #id-{{ formatIdHuman(task.no) }}
+                            </span>
+                            <div class="flex items-center gap-2">
+                                                                <button @click="showModalShow1(task)"  v-if="task.details && task.details.length > 0"
+                                    class="w-8 h-8 flex items-center justify-center bg-red-50 text-blue-600 rounded-full hover:bg-amber-100 transition-colors"
+                                    title="Edit Task">
+                              <span class="text-xs font-bold ml-auto"
+                                                                :class="calcProgress(task.details) >= 100 ? 'text-green-600' : 'text-slate-400'">
+                                                                {{ calcProgress(task.details) }}%
+                                                            </span>
+                                </button>
+                                <button @click="bukaEdit(task)"
+                                    class="w-8 h-8 flex items-center justify-center bg-amber-50 text-blue-600 rounded-full hover:bg-amber-100 transition-colors"
+                                    title="Edit Task">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                    </svg>
+                                </button>
+
+                                <button @click="copyToWA(task)"
+                                    class="w-8 h-8 flex items-center justify-center bg-blue-50 text-green-600 rounded-full hover:bg-blue-100 transition-colors"
+                                    title="Copy format WA">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                    </svg>
+                                </button>
+
+                                <span :class="getUrgencyClass(task.daysLeft)" class="badge-pill text-[10px]">
+                                    {{ getDaysText(task.daysLeft) }}
+                                </span>
+                            </div>
                         </div>
-                        <h4 class="font-bold text-slate-800 text-sm leading-snug">{{ task.title }}</h4>
-                        <div class="flex justify-between items-center text-[10px] font-bold">
-                            <div class="text-blue-600 uppercase">{{ task.user }}</div>
-                            <div class="text-slate-400">{{ formatDate(task.deadline) }}</div>
+
+                        <h4 class="font-bold text-slate-800 text-sm leading-snug pr-10">
+                            {{ task.title }}
+                        </h4>
+
+                        <div
+                            class="flex justify-between items-center text-[10px] font-bold mt-1 pt-2 border-t border-slate-50">
+                            <div class="flex items-center gap-2 text-blue-600 uppercase">
+                                <div
+                                    class="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center text-[8px]">
+                                    {{ getInitials(task.user) }}
+                                </div>
+                                {{ task.user }}
+                            </div>
+                            <div class="text-slate-500 bg-slate-100 px-2 py-0.5 rounded text-sm">
+                                📅 {{ formatDate(task.deadline) }}
+                            </div>
                         </div>
+                        <br>
+                    </div>
+
+                    <div v-if="filteredTasks.length === 0"
+                        class="p-10 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">
+                        Data tidak ditemukan
                     </div>
                 </div>
             </div>
         </div>
+        <!-- {{linn}} -->
+
+        <transition name="fade">
+            <div v-if="showModal"
+                class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+
+                <div
+                    class="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+
+                    <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                        <h3 class="text-lg font-bold text-slate-800">Tambah Kegiatan Baru</h3>
+                        <button @click="showModal = false" class="text-slate-400 hover:text-slate-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">ID
+                                (Otomatis)</label>
+                            <input type="text" v-model="formData.id" readonly
+                                class="w-full bg-slate-50 border border-slate-100 rounded-lg px-4 py-2.5 text-sm font-mono text-slate-500 cursor-not-allowed outline-none">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">
+                                Kegiatan
+                            </label>
+                            <textarea v-model="formData.nama_kegiatan" placeholder="Contoh: Audit Laporan Keuangan..."
+                                rows="3"
+                                class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none resize-none"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">
+                                PIC
+                            </label>
+
+                            <div class="relative">
+                                <input type="text" v-model="formData.pic" list="picSuggestions"
+                                    placeholder="Ketik nama atau pilih dari daftar..."
+                                    class="bg-blue-100 w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+
+                                <datalist id="picSuggestions">
+                                    <option v-for="(name, index) in listPic" :key="index" :value="name"></option>
+                                </datalist>
+                            </div>
+
+                            <p class="mt-1 text-[9px] text-slate-400 italic">
+                                *Ketik nama baru jika PIC belum terdaftar dalam sistem.
+                            </p>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Tanggal
+                                Deadline</label>
+                            <input type="date" v-model="formData.tgl_deadline"
+                                class="bg-pink-100 w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
+                        <button @click="showModal = false"
+                            class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-white transition-all">
+                            Batal
+                        </button>
+                        <button @click="simpanData"
+                            class="flex-1 px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all">
+                            Simpan Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+        <transition name="toast-fade">
+            <div v-if="showToast"
+                class="fixed top-5 right-5 bg-slate-800/95 backdrop-blur-sm text-white px-6 py-4 rounded-2xl shadow-2xl z-[90999] flex items-center border border-slate-700">
+                <div class="bg-green-500/20 p-2 rounded-lg mr-3">
+                    <i class="fas fa-check-circle text-green-400"></i>
+                </div>
+                <span class="font-bold text-sm tracking-wide">{{ toastMessage }}</span>
+            </div>
+        </transition>
+
+        <transition name="fade">
+            <div v-if="showFilter"
+                class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+
+                <div
+                    class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+
+                    <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                        <h3 class="text-lg font-bold text-slate-800">Filter Data</h3>
+                        <button @click="showFilter = false"
+                            class="text-slate-400 hover:text-slate-600 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">
+                                PIC / UIC
+                            </label>
+                            <select v-model="filterPic"
+                                class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none appearance-none bg-no-repeat bg-[right_1rem_center] bg-[length:1em_1em]"
+                                style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E');">
+                                <option class="text-blue-700" value="">Semua PIC</option>
+                                <option class="text-blue-700" v-for="person in listPic" :key="person" :value="person">{{
+                                    person }}</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">
+                                Pilih Bulan
+                            </label>
+                            <select v-model="filterMonth"
+                                class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none appearance-none bg-no-repeat bg-[right_1rem_center] bg-[length:1em_1em]"
+                                style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E');">
+                                <option value="">Semua Bulan</option>
+                                <option v-for="(m, index) in months" :key="index" :value="index">{{ m }}</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Mulai</label>
+                                <input type="date" v-model="filterStart"
+                                    class="w-full border border-slate-200 rounded-lg px-4 py-2 text-xs font-bold text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Akhir</label>
+                                <input type="date" v-model="filterEnd"
+                                    class="w-full border border-slate-200 rounded-lg px-4 py-2 text-xs font-bold text-slate-700 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
+                        <button @click="resetFilter"
+                            class="flex-1 px-4 py-2.5 border border-orange-200 text-orange-600 rounded-xl text-sm font-bold hover:bg-white transition-all flex items-center justify-center gap-2">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                        <button @click="showFilter = false"
+                            class="flex-[1.5] px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all">
+                            Terapkan Filter
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+
+        <transition name="fade">
+            <div v-if="showModalEdit"
+                class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+
+                <div
+                    class="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+
+                    <!-- HEADER -->
+                    <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                        <h3 class="text-lg font-bold text-slate-800">Edit Kegiatan</h3>
+                        <button @click="showModalEdit = false" class="text-slate-400 hover:text-slate-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <!-- BODY -->
+                    <div class="p-6 space-y-4 overflow-y-auto max-h-[calc(100vh-160px)]">
+
+                        <!-- ID -->
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">ID</label>
+                            <input type="text" v-model="formDataEdit.id" readonly
+                                class="w-full bg-slate-50 border border-slate-100 rounded-lg px-4 py-2.5 text-sm font-mono text-slate-500 cursor-not-allowed outline-none">
+                        </div>
+
+                        <!-- KEGIATAN -->
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Kegiatan</label>
+                            <textarea v-model="formDataEdit.nama_kegiatan" rows="3" placeholder="Deskripsi kegiatan..."
+                                class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none resize-none"></textarea>
+                        </div>
+
+                        <!-- PIC -->
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">PIC</label>
+                            <input type="text" v-model="formDataEdit.pic" list="picSuggestionsEdit"
+                                placeholder="Pilih atau ketik PIC..."
+                                class="bg-blue-100 w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none">
+                            <datalist id="picSuggestionsEdit">
+                                <option v-for="(name, index) in listPic" :key="index" :value="name"></option>
+                            </datalist>
+                        </div>
+
+                        <!-- DEADLINE -->
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">
+                                Tanggal Deadline
+                            </label>
+                            <input type="date" v-model="formDataEdit.tgl_deadline"
+                                class="w-full bg-pink-50 border border-pink-200 rounded-lg px-4 py-2.5 text-sm font-semibold text-pink-900 focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 transition-all outline-none">
+                        </div>
+
+                        <div v-if="!detail" class="px-4 py-2.5  flex justify-end items-center">
+
+
+                            <!-- 🔥 TOGGLE BUTTON -->
+                            <button @click="detail = !detail"
+                                class="text-green-600 bg-indigo-50 hover:bg-indigo-100 text-xs font-bold px-2.5 py-1 rounded-lg transition-all">
+
+
+
+
+                                <span>Detail </span><span v-if="formDataEdit.details.length > 0">{{ progressPercent
+                                    }}%</span>
+
+                            </button>
+                        </div>
+
+                        <!-- ========================= -->
+                        <!-- DETAIL KEGIATAN -->
+                        <!-- ========================= -->
+                        <div v-if="detail" class="border border-slate-200 rounded-xl overflow-hidden">
+
+                            <!-- HEADER -->
+                            <div class="px-4 bg-green-50 flex justify-end items-center">
+                                <button @click="detail=false">
+                                    <span class="text-red-500">x</span>
+                                </button>
+                            </div>
+                            <div
+                                class="px-4 py-2.5 bg-green-50 border-b border-slate-100 flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-slate-700">Detail Kegiatan</span>
+                                    <span class="text-[10px] bg-indigo-100 text-indigo-700 rounded-full px-2 py-0.5">
+                                        {{ formDataEdit.details?.length || 0 }} item
+                                    </span>
+                                </div>
+
+                                <!-- 🔥 TOGGLE BUTTON -->
+                                <button @click="toggleDetailForm"
+                                    class="text-xs font-bold px-2.5 py-1 rounded-lg transition-all" :class="showAddDetailForm 
+                                ? 'text-red-600 bg-red-50 hover:bg-red-100' 
+                                : 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100'">
+
+                                    <span v-if="!showAddDetailForm">+ Tambah Details</span>
+                                    <span v-else>Tutup</span>
+                                </button>
+                            </div>
+
+                            <!-- 🔥 FORM TAMBAH -->
+                            <transition name="fade">
+                                <div v-if="showAddDetailForm"
+                                    class="px-4 py-3 bg-green-200 border-b border-slate-100 space-y-2">
+
+                                    <input type="text" v-model="newDetailText" ref="inputDetail"
+                                        placeholder="Isi detail kegiatan..."
+                                        class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-400">
+
+                                    <div class="flex items-center gap-2">
+                                        <label class="text-[10px] text-slate-400 whitespace-nowrap">
+                                            Bobot spesifik (%)
+                                        </label>
+                                        <input type="number" v-model.number="newDetailPct" min="0" max="100"
+                                            placeholder="kosongkan jika otomatis"
+                                            class="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-indigo-400">
+                                    </div>
+
+                                    <div class="flex gap-2">
+                                        <button @click="showAddDetailForm = false"
+                                            class="bg-red-300 flex-1 py-1.5 text-xs border border-slate-200 rounded-lg text-white-500 hover:bg-red-200">
+                                            Batal
+                                        </button>
+
+                                        <button @click="addDetail"
+                                            class="flex-1 py-1.5 text-xs bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700">
+                                            Simpan
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </transition>
+
+                            <!-- PROGRESS -->
+                            <div class="px-4 py-2 bg-green-50 border-b border-slate-100 flex items-center gap-3">
+                                <div class="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full transition-all duration-300"
+                                        :class="progressPercent >= 100 ? 'bg-green-500' : progressPercent > 50 ? 'bg-indigo-500' : 'bg-amber-400'"
+                                        :style="{ width: progressPercent + '%' }">
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold min-w-[36px] text-right"
+                                    :class="progressPercent >= 100 ? 'text-green-600' : 'text-slate-500'">
+                                    {{ progressPercent }}%
+                                </span>
+                            </div>
+
+                            <!-- EMPTY -->
+                            <div v-if="!formDataEdit.details || formDataEdit.details.length === 0"
+                                class="px-4 py-3 text-xs text-slate-400 text-center">
+                                Belum ada detail.
+                            </div>
+
+                            <!-- LIST -->
+                            <div class="overflow-y-auto max-h-48">
+                                <div v-for="(d, i) in formDataEdit.details" :key="d.id"
+                                    class="flex items-start gap-2.5 px-4 py-2.5 border-b border-slate-100 last:border-b-0">
+
+                                    <input type="checkbox" :checked="d.done === 'true'" @change="toggleDetail(i)"
+                                        :disabled="savingDetailId === d.id" class="mt-0.5 cursor-pointer flex-shrink-0">
+
+                                    <div class="flex-1 text-sm flex items-center gap-2">
+                                        <span
+                                            :class="d.done === 'true' ? 'line-through text-slate-400' : 'text-slate-700'">
+                                            {{ d.text }}
+                                        </span>
+                                        <span v-if="d.pct !== null && d.pct !== '' && d.pct !== '-'"
+                                            class="text-[10px] bg-amber-100 text-amber-800 rounded-full px-2 py-0.5"
+                                            :class="d.done === 'true' ? 'opacity-50' : ''">
+                                            {{ d.pct }}% spesifik
+                                        </span>
+                                    </div>
+
+                                    <span v-if="savingDetailId === d.id" class="text-indigo-400 animate-pulse text-sm">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </span>
+
+                                    <template v-else>
+                                        <!-- Tombol Edit -->
+                                        <button @click="bukaEditDetail(d)"
+                                            class="text-slate-300 hover:text-indigo-400 text-xs transition-all mr-1">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                        <!-- Tombol Hapus -->
+                                        <button @click="removeDetail(i)"
+                                            class="text-slate-300 hover:text-red-400 text-xs transition-all">
+                                            &#x2715;
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- FOOTER -->
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
+                        <button @click="showModalEdit = false"
+                            class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-white transition-all">
+                            Batal
+                        </button>
+                        <button @click="updateData"
+                            class="flex-1 px-4 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all">
+                            Update Data
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </transition>
+
+
+        <transition name="fade">
+            <div v-if="showModalEditDetail"
+                class="fixed inset-0 z-[600] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+                <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+
+                    <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                        <h3 class="text-sm font-bold text-slate-800">Edit Detail</h3>
+                        <button @click="showModalEditDetail = false" class="text-slate-400 hover:text-slate-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-5 space-y-3">
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Isi
+                                Detail</label>
+                            <textarea v-model="formEditDetail.text" rows="3"
+                                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-400 resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Bobot
+                                Spesifik (%)</label>
+                            <input type="number" v-model.number="formEditDetail.pct" min="0" max="100"
+                                placeholder="kosongkan jika otomatis"
+                                class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-400">
+                        </div>
+                    </div>
+
+                    <div class="px-5 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
+                        <button @click="showModalEditDetail = false"
+                            class="flex-1 py-2 text-xs border border-slate-200 rounded-xl text-slate-500 hover:bg-white">Batal</button>
+                        <button @click="simpanEditDetail"
+                            class="flex-1 py-2 text-xs bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700">Simpan</button>
+                    </div>
+
+                </div>
+            </div>
+        </transition>
+
+
+        <transition name="fade">
+            <div v-if="showModalShow"
+                class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+
+                <div
+                    class="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+
+                    <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                        <h3 class="text-lg font-bold text-slate-800">Detail Kegiatan</h3>
+                        <button @click="showModalShow = false" class="text-slate-400 hover:text-slate-600">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <!-- Bagian ini yang bisa scroll -->
+                    <div class="p-6 space-y-4 overflow-y-auto max-h-[calc(100vh-160px)]">
+
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">ID</label>
+                            <input type="text" v-model="formDataEdit.id" readonly
+                                class="w-full bg-slate-50 border border-slate-100 rounded-lg px-4 py-2.5 text-sm font-mono text-slate-500 cursor-not-allowed outline-none">
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Kegiatan</label>
+                            <textarea readonly v-model="formDataEdit.nama_kegiatan" rows="3"
+                                placeholder="Deskripsi kegiatan..."
+                                class="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none resize-none cursor-not-allowed"></textarea>
+                        </div>
+
+                        <div class="mt-4">
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">PIC</label>
+                            <input readonly type="text" v-model="formDataEdit.pic" list="picSuggestionsEdit"
+                                placeholder="Pilih atau ketik PIC..."
+                                class="bg-blue-100 w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none cursor-not-allowed">
+                            <datalist id="picSuggestionsEdit">
+                                <option v-for="(name, index) in listPic" :key="index" :value="name"></option>
+                            </datalist>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Tanggal
+                                Deadline</label>
+                            <input type="date" readonly v-model="formDataEdit.tgl_deadline"
+                                class="w-full bg-pink-50 border border-pink-200 rounded-lg px-4 py-2.5 text-sm font-semibold text-pink-900 focus:border-pink-500 focus:ring-4 focus:ring-pink-500/10 transition-all outline-none cursor-not-allowed">
+                        </div>
+
+                        <!-- Section Detail Kegiatan -->
+                        <div v-if="formDataEdit.details.length > 0"
+                            class="border border-slate-200 rounded-xl overflow-hidden">
+
+                            <!-- Header -->
+                            <div
+                                class="px-4 py-2.5 bg-green-50 border-b border-slate-100 flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-slate-700">Detail Kegiatan</span>
+                                    <span class="text-[10px] bg-indigo-100 text-indigo-700 rounded-full px-2 py-0.5">
+                                        {{ formDataEdit.details?.length || 0 }} item
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <!-- Form Tambah -->
+                            <div v-if="showAddDetailForm" class="px-4 py-3 border-b border-slate-100 space-y-2">
+                                <input type="text" v-model="newDetailText" ref="inputDetail"
+                                    placeholder="Isi detail kegiatan..."
+                                    class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-400">
+                                <div class="flex items-center gap-2">
+                                    <label class="text-[10px] text-slate-400 whitespace-nowrap">Bobot spesifik
+                                        (%)</label>
+                                    <input type="number" v-model.number="newDetailPct" min="0" max="100"
+                                        placeholder="kosongkan jika otomatis"
+                                        class="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-indigo-400">
+                                </div>
+                                <div class="flex gap-2">
+                                    <button @click="showAddDetailForm = false"
+                                        class="flex-1 py-1.5 text-xs border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50">Batal</button>
+                                    <button @click="addDetail"
+                                        class="flex-1 py-1.5 text-xs bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700">Simpan</button>
+                                </div>
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div class="px-4 py-2 bg-green-50 border-b border-slate-100 flex items-center gap-3">
+                                <div class="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full transition-all duration-300"
+                                        :class="progressPercent >= 100 ? 'bg-green-500' : progressPercent > 50 ? 'bg-indigo-500' : 'bg-amber-400'"
+                                        :style="{ width: progressPercent + '%' }"></div>
+                                </div>
+                                <span class="text-xs font-bold min-w-[36px] text-right"
+                                    :class="progressPercent >= 100 ? 'text-green-600' : 'text-slate-500'">
+                                    {{ progressPercent }}%
+                                </span>
+                            </div>
+
+                            <!-- List Detail — hanya bagian ini yang overflow scroll -->
+                            <div v-if="!formDataEdit.details || formDataEdit.details.length === 0"
+                                class="px-4 py-3 text-xs text-slate-400 text-center">
+                                Belum ada detail.
+                            </div>
+
+                            <div class="overflow-y-auto max-h-48">
+                                <div v-for="(d, i) in formDataEdit.details" :key="d.id"
+                                    class="flex items-start gap-2.5 px-4 py-2.5 border-b border-slate-100 last:border-b-0">
+
+                                    <input type="checkbox" :checked="d.done === 'true'" disabled
+                                        class="mt-0.5 flex-shrink-0 cursor-not-allowed opacity-60">
+
+                                    <div class="flex-1 text-sm flex items-center gap-2">
+
+                                        <!-- TEXT (kena coret) -->
+                                        <span
+                                            :class="d.done === 'true' ? 'line-through text-slate-400' : 'text-slate-700'">
+                                            {{ d.text }}
+                                        </span>
+
+                                        <!-- BADGE (tidak kena coret) -->
+                                        <span v-if="d.pct !== null && d.pct !== '' && d.pct !== '-'"
+                                            class="text-[10px] bg-amber-100 text-amber-800 rounded-full px-2 py-0.5"
+                                            :class="d.done === 'true' ? 'opacity-50' : ''">
+                                            {{ d.pct }}% spesifik
+                                        </span>
+
+                                    </div>
+
+                                    <span v-if="savingDetailId === d.id" class="text-indigo-400 animate-pulse text-sm">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </span>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Footer tetap di bawah -->
+                    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
+                        <button @click="showModalShow = false"
+                            class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm font-bold hover:bg-white transition-all">
+                            Batal
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+        </transition>
+
+
     </div>
 
     <script>
@@ -230,53 +930,722 @@
                 filterMonth: '', // 0-11
                 filterStart: '', // YYYY-MM-DD
                 filterEnd: '',   // YYYY-MM-DD
-                today: new Date('2026-04-15'),
+                today: new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" })),
                 months: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
-                tasks: []
+                tasks: [],
+                showFilter: false,
+                showModal: false,
+
+                loading: false,
+                formData: {
+                    id: '',
+                    nama_kegiatan: '',
+                    pic: '',
+                    tgl_deadline: ''
+                },
+                linn: '',
+                showToast: false,
+                toastMessage: '',
+                filterPic: '',
+                // State BARU khusus untuk modal edit
+                showModalEdit: false,
+                showModalShow: false,
+                formDataEdit: {
+                    id: '',
+                    nama_kegiatan: '',
+                    pic: '',
+                    tgl_deadline: '',
+                    details: []   // <-- tambahkan ini
+                },
+                showAddDetailForm: false,
+                newDetailText: '',
+                newDetailPct: null,
+                savingDetailId: null,
+                filterStatus: '', // '', 'all', 'critical', 'done'
+                showAddDetailForm: false,
+                detail: false,
+                showModalEditDetail: false,
+                formEditDetail: {
+                    index: null,
+                    id: '',
+                    text: '',
+                    pct: '',
+                },
+
             },
             computed: {
+                progressPercent() {
+                    const details = this.formDataEdit.details || [];
+                    const totalFixed = details
+                        .filter(d => d.pct !== null && d.pct !== '' && d.pct !== '-')
+                        .reduce((s, d) => s + Number(d.pct), 0);
+                    const autoItems = details.filter(d => d.pct === null || d.pct === '' || d.pct === '-');
+                    const autoWeight = Math.max(0, 100 - totalFixed);
+                    const perAuto = autoItems.length > 0 ? autoWeight / autoItems.length : 0;
+                    let earned = 0;
+                    details.forEach(d => {
+                        if (d.done !== 'true') return;
+                        earned += (d.pct !== null && d.pct !== '' && d.pct !== '-') ? Number(d.pct) : perAuto;
+                    });
+                    return Math.round(Math.min(100, earned));
+                },
+                listPic() {
+                    if (!this.tasks) return [];
+
+                    // 1. Ambil semua 'user' (pic)
+                    const allPics = this.tasks.map(task => {
+                        // Jika data di spreadsheet diawali petik satu ('), kita bersihkan dulu
+                        let name = task.user;
+                        if (name && name.startsWith("'")) {
+                            name = name.substring(1);
+                        }
+                        return name;
+                    });
+
+                    // 2, 3, 4: Hilangkan duplikat, filter kosong, dan urutkan
+                    return [...new Set(allPics)]
+                        .filter(name => name && name.trim() !== "")
+                        .sort((a, b) => a.localeCompare(b));
+                },
                 processedTasks() {
                     return this.tasks.map(task => {
                         const target = new Date(task.deadline);
-                        const diffTime = target - this.today;
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        return { ...task, daysLeft: diffDays, dateObj: target };
+
+                        // Konversi target ke jam 00:00 WIB agar perbandingan "hari" murni
+                        const tglTarget = new Date(target.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
+                        tglTarget.setHours(0, 0, 0, 0);
+
+                        // Konversi today ke jam 00:00 WIB
+                        const tglSekarang = new Date(this.today.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
+                        tglSekarang.setHours(0, 0, 0, 0);
+
+                        // Hitung selisih dalam milidetik kemudian konversi ke hari
+                        const diffTime = tglTarget.getTime() - tglSekarang.getTime();
+                        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+                        return {
+                            ...task,
+                            daysLeft: diffDays,
+                            dateObj: tglTarget
+                        };
                     }).sort((a, b) => a.daysLeft - b.daysLeft);
                 },
                 filteredTasks() {
                     return this.processedTasks.filter(t => {
-                        // 1. Search Filter
-                        const matchSearch = t.title.toLowerCase().includes(this.search.toLowerCase()) ||
+
+                        // Tambahkan filterPic di pengecekan filterKosong
+                        const filterKosong =
+                            this.filterMonth === '' &&
+                            this.filterStart === '' &&
+                            this.filterEnd === '' &&
+                            this.filterPic === '' &&
+                            this.filterStatus === '';
+
+                        // Tabel menyembunyikan masa lalu jika filter benar-benar kosong
+                        if (filterKosong && t.daysLeft < 0) {
+                            return false;
+                        }
+
+                        // 1. Logika Pencarian (Search Bar)
+                        const matchSearch =
+                            t.title.toLowerCase().includes(this.search.toLowerCase()) ||
                             t.user.toLowerCase().includes(this.search.toLowerCase());
 
-                        // 2. Month Filter
-                        const matchMonth = this.filterMonth === '' || t.dateObj.getMonth() == this.filterMonth;
+                        // 2. Logika Filter Bulan
+                        const matchMonth =
+                            this.filterMonth === '' ||
+                            t.dateObj.getMonth() == this.filterMonth;
 
-                        // 3. Date Range Filter
+                        // 3. Logika Filter PIC
+                        const matchPic =
+                            this.filterPic === '' ||
+                            t.user === this.filterPic;
+
+                        // 4. Logika Rentang Tanggal
                         const taskTime = t.dateObj.getTime();
-                        const startLimit = this.filterStart ? new Date(this.filterStart).getTime() : -Infinity;
-                        const endLimit = this.filterEnd ? new Date(this.filterEnd).getTime() : Infinity;
-                        const matchRange = taskTime >= startLimit && taskTime <= endLimit;
+                        const startLimit = this.filterStart
+                            ? new Date(this.filterStart).setHours(0, 0, 0, 0)
+                            : -Infinity;
 
-                        return matchSearch && matchMonth && matchRange;
+                        const endLimit = this.filterEnd
+                            ? new Date(this.filterEnd).setHours(23, 59, 59, 999)
+                            : Infinity;
+
+                        const matchRange =
+                            taskTime >= startLimit && taskTime <= endLimit;
+
+                        // 5. 🔥 Filter dari klik icon (STATUS)
+                        const matchStatus =
+                            this.filterStatus === '' ||
+                            this.filterStatus === 'all' ||
+
+                            (this.filterStatus === 'critical' &&
+                                t.daysLeft <= 3 && t.daysLeft >= 0) ||
+
+                            (this.filterStatus === 'done' &&
+                                t.daysLeft < 0);
+
+                        // Gabungkan semua kondisi
+                        return matchSearch &&
+                            matchMonth &&
+                            matchPic &&
+                            matchRange &&
+                            matchStatus;
                     });
                 },
-                criticalCount() { return this.filteredTasks.filter(t => t.daysLeft >= 0 && t.daysLeft <= 3).length; },
-                doneCount() { return this.filteredTasks.filter(t => t.daysLeft < 0).length; }
+                // Kuncinya di sini: Gunakan processedTasks agar tetap menghitung yang tersembunyi
+                criticalCount() {
+                    return this.processedTasks.filter(t => t.daysLeft >= 0 && t.daysLeft <= 3).length;
+                },
+                doneCount() {
+                    return this.processedTasks.filter(t => t.daysLeft < 0).length;
+                }
             },
             methods: {
+                bukaEditDetail(d) {
+                    this.formEditDetail = {
+                        index: this.formDataEdit.details.findIndex(x => x.id === d.id),
+                        id: d.id,
+                        text: d.text.startsWith("'") ? d.text.substring(1) : d.text, // hapus prefix '
+                        pct: d.pct === '0' || d.pct === '' ? '' : d.pct,
+                    };
+                    this.showModalEditDetail = true;
+                },
+
+                simpanEditDetail() {
+                    if (!this.formEditDetail.text.trim()) return;
+                    const pctRaw = this.formEditDetail.pct;
+                    const pct = (pctRaw !== null && pctRaw !== '' && !isNaN(pctRaw))
+                        ? String(pctRaw) : '0';
+
+                    const updated = {
+                        ...this.formDataEdit.details[this.formEditDetail.index],
+                        text: `'${this.formEditDetail.text.trim()}`,
+                        pct: pct,
+                    };
+
+                    const newDetails = this.formDataEdit.details.map((d, i) =>
+                        i === this.formEditDetail.index ? updated : d
+                    );
+                    this.$set(this.formDataEdit, 'details', newDetails);
+                    this.showModalEditDetail = false;
+
+                    // Simpan ke DB
+                    this.savingDetailId = updated.id;
+                    var baseUrl = "https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec";
+                    let app = this;
+                    $.ajax({
+                        type: "GET",
+                        url: baseUrl,
+                        crossDomain: true,
+                        dataType: "jsonp",
+                        data: {
+                            action: "update",
+                            table: "details2026",
+                            id: updated.id,
+                            data: JSON.stringify({ text: updated.text, pct: updated.pct })
+                        },
+                        success: function (res) {
+                            console.log("Response edit detail:", res);
+                        },
+                        complete: function () {
+                            app.savingDetailId = null;
+                            app.ambilDetail();
+                        }
+                    });
+                },
+                toggleDetailForm() {
+                    this.showAddDetailForm = !this.showAddDetailForm;
+
+                    if (this.showAddDetailForm) {
+                        this.$nextTick(() => {
+                            this.$refs.inputDetail && this.$refs.inputDetail.focus();
+                        });
+                    }
+                },
+
+                addDetail() {
+                    if (!this.newDetailText) return;
+
+                    // contoh push (sesuaikan dengan sistem kamu)
+                    this.formDataEdit.details.push({
+                        id: Date.now(),
+                        text: this.newDetailText,
+                        pct: this.newDetailPct || null,
+                        done: 'false'
+                    });
+
+                    // reset + tutup form
+                    this.newDetailText = '';
+                    this.newDetailPct = '';
+                    this.showAddDetailForm = false;
+                },
+                setFilter(type) {
+                    // klik lagi untuk reset
+                    this.filterStatus = this.filterStatus === type ? '' : type;
+                },
+                calcProgress(details) {
+                    if (!details || details.length === 0) return 0;
+
+                    // fungsi bantu: cek apakah pct valid angka
+                    const isValidPct = (val) => {
+                        return val !== null &&
+                            val !== '' &&
+                            val !== '-' &&
+                            !isNaN(Number(val)) &&
+                            Number(val) > 0;
+                    };
+
+                    // total persen manual
+                    const totalFixed = details
+                        .filter(d => isValidPct(d.pct))
+                        .reduce((s, d) => s + Number(d.pct), 0);
+
+                    // item auto (termasuk "-" sekarang dianggap auto)
+                    const autoItems = details.filter(d => !isValidPct(d.pct));
+
+                    const autoWeight = Math.max(0, 100 - totalFixed);
+                    const perAuto = autoItems.length > 0 ? autoWeight / autoItems.length : 0;
+
+                    let earned = 0;
+
+                    details.forEach(d => {
+                        if (d.done !== 'true') return;
+
+                        earned += isValidPct(d.pct)
+                            ? Number(d.pct)
+                            : perAuto;
+                    });
+
+                    const result = Math.round(Math.min(100, earned));
+
+                    return isNaN(result) ? 0 : result;
+                },
+                toggleDetail(index) {
+                    // Toggle string "true"/"false"
+                    const details = this.formDataEdit.details.map((d, i) => {
+                        if (i === index) return { ...d, done: d.done === 'true' ? 'false' : 'true' };
+                        return d;
+                    });
+                    this.$set(this.formDataEdit, 'details', details);
+
+                    const detail = this.formDataEdit.details[index];
+
+                    // ↓ Update ke DB di balik layar
+                    this.savingDetailId = detail.id;
+                    var baseUrl = "https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec";
+                    let app = this;
+                    $.ajax({
+                        type: "GET",
+                        url: baseUrl,
+                        crossDomain: true,
+                        dataType: "jsonp",
+                        data: {
+                            action: "update",
+                            table: "details2026",
+                            id: detail.id,
+                            data: JSON.stringify({ done: detail.done }) // sudah string "true"/"false"
+                        },
+                        success: function (res) {
+                            console.log("Response toggle:", res);
+
+                        },
+                        complete: function () {
+                            app.savingDetailId = null;
+                            app.ambilData();
+                            console.log("ambil data");
+
+                        }
+                    });
+
+                },
+
+                addDetail() {
+                    if (!this.newDetailText.trim()) return;
+                    const pctRaw = this.newDetailPct;
+                    const pct = (pctRaw !== null && pctRaw !== '' && !isNaN(pctRaw))
+                        ? String(pctRaw) : '-';  // ← kosong → '0' bukan ''
+
+                    const existing = Array.isArray(this.formDataEdit.details) ? this.formDataEdit.details : [];
+
+                    const newItem = {
+                        id: String(Date.now()),
+                        task_id: String(this.formDataEdit.id),
+                        text: `'${this.newDetailText.trim()}`,
+                        done: 'false',
+                        pct: pct,
+                    };
+
+                    this.$set(this.formDataEdit, 'details', [...existing, newItem]);
+
+                    this.newDetailText = '';
+                    this.newDetailPct = null;
+                    this.showAddDetailForm = false;
+
+                    this.savingDetailId = newItem.id;
+                    var baseUrl = "https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec";
+                    let app = this;
+                    $.ajax({
+                        type: "GET",
+                        url: baseUrl,
+                        crossDomain: true,
+                        dataType: "jsonp",
+                        data: {
+                            action: "insert",
+                            table: "details2026",
+                            data: JSON.stringify(newItem)
+                        },
+                        success: function (res) {
+                            console.log("Response GAS:", res);
+
+                        },
+                        complete: function () {
+                            app.savingDetailId = null;
+                            app.ambilData();
+                            console.log("ambil data");
+                        }
+                    });
+
+                },
+
+                removeDetail(index) {
+    if (!confirm('Yakin ingin menghapus detail ini?')) return; // ← tambahkan ini
+
+    const removedItem = this.formDataEdit.details[index];
+    const newDetails = this.formDataEdit.details.filter((_, i) => i !== index);
+    this.$set(this.formDataEdit, 'details', newDetails);
+
+    this.savingDetailId = removedItem.id;
+    var baseUrl = "https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec";
+    let app = this;
+    $.ajax({
+        type: "GET",
+        url: baseUrl,
+        crossDomain: true,
+        dataType: "jsonp",
+        data: {
+            action: "delete",
+            table: "details2026",
+            id: removedItem.id
+        },
+        success: function(res) {
+            console.log("Response hapus:", res);
+        },
+        complete: function() {
+            app.savingDetailId = null;
+            app.ambilDetail(); // ← ganti ambilData() ke ambilDetail() lebih ringan
+        }
+    });
+},
+updateData() {
+                    if (!this.formDataEdit.nama_kegiatan || !this.formDataEdit.pic || !this.formDataEdit.tgl_deadline) {
+                        alert('Mohon lengkapi semua data sebelum melakukan update.');
+                        return;
+                    }
+
+                    // CARA BENAR: Kosongkan data sumbernya (tasks), 
+                    // maka filteredTasks akan otomatis ikut kosong (reaktif).
+                    this.tasks = [];
+
+                    var payload = {
+                        nama_kegiatan: `'${this.formDataEdit.nama_kegiatan}`,
+                        pic: `'${this.formDataEdit.pic}`,
+                        tgl_deadline: this.formDataEdit.tgl_deadline
+                    };
+
+                    var baseUrl = "https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec";
+
+                    let app = this;
+                    app.loading = true;
+                    app.showModalEdit = false;
+
+                    $.ajax({
+                        type: "GET",
+                        url: baseUrl,
+                        crossDomain: true,
+                        dataType: "jsonp",
+                        data: {
+                            action: "update",
+                            table: "data2026",
+                            id: app.formDataEdit.id,
+                            data: JSON.stringify(payload)
+                        },
+                        complete: function () {
+                            app.formDataEdit.nama_kegiatan = '';
+                            app.formDataEdit.pic = '';
+                            app.formDataEdit.tgl_deadline = '';
+
+                            app.showSuccessToast("Data Berhasil di UPDATE!");
+
+                            // Tetap pastikan kosong sebelum fetch ulang
+                            app.tasks = [];
+
+                            setTimeout(() => {
+                                if (typeof app.ambilData === "function") {
+                                    app.ambilData(); // Ini nanti akan mengisi kembali this.tasks
+                                }
+                                app.loading = false;
+                                console.log("Proses Update Berhasil Selesai");
+                            }, 1000);
+                        }
+                    });
+                },
+                showModalShow1(task) {
+                    let formattedDate = "";
+                    if (task.deadline) {
+                        const dateObj = new Date(task.deadline);
+                        const year = dateObj.getFullYear();
+                        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                        const day = String(dateObj.getDate()).padStart(2, '0');
+                        formattedDate = `${year}-${month}-${day}`;
+                    }
+
+                    this.formDataEdit = {
+                        id: task.no,
+                        nama_kegiatan: task.title,
+                        pic: task.user,
+                        tgl_deadline: formattedDate,
+                        details: Array.isArray(task.details) ? task.details.map(d => ({
+                            ...d,
+                            done: String(d.done) // ← pastikan string
+                        })) : []
+                    };
+
+                    this.showModalShow = true;
+                },
+
+
+                bukaEdit(task) {
+                    let formattedDate = "";
+                    if (task.deadline) {
+                        const dateObj = new Date(task.deadline);
+                        const year = dateObj.getFullYear();
+                        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                        const day = String(dateObj.getDate()).padStart(2, '0');
+                        formattedDate = `${year}-${month}-${day}`;
+                    }
+
+                    this.formDataEdit = {
+                        id: task.no,
+                        nama_kegiatan: task.title,
+                        pic: task.user,
+                        tgl_deadline: formattedDate,
+                        details: Array.isArray(task.details) ? task.details.map(d => ({
+                            ...d,
+                            done: String(d.done) // ← pastikan string
+                        })) : []
+                    };
+
+                    this.showModalEdit = true;
+                },
+                // Fungsi format ID (jika belum ada) agar tampilan di modal tetap cantik
+                formatIdHuman(no) {
+                    return no.toString().slice(-5); // Contoh: ambil 5 digit terakhir saja
+                },
+                formatIdHuman(rawId) {
+                    // 1. Validasi awal: jika kosong, langsung balikkan strip
+                    if (rawId === null || rawId === undefined) return '-';
+
+                    // 2. Paksa jadi string agar .includes dan .split tidak error
+                    const idStr = String(rawId);
+
+                    // 3. Ambil angka timestamp-nya
+                    const timestamp = idStr.includes('-') ? idStr.split('-')[1] : idStr;
+
+                    // 4. Ubah ke objek Date
+                    const date = new Date(Number(timestamp));
+
+                    // 5. Cek jika hasilnya Invalid Date
+                    if (isNaN(date.getTime())) return idStr;
+
+                    // 6. Susun format YYYYMMDDHHmm
+                    const YYYY = date.getFullYear();
+                    const MM = String(date.getMonth() + 1).padStart(2, '0');
+                    const DD = String(date.getDate()).padStart(2, '0');
+                    const HH = String(date.getHours()).padStart(2, '0');
+                    const mm = String(date.getMinutes()).padStart(2, '0');
+
+                    // Ambil 3 angka terakhir milidetik agar ANTI-BENTROK
+                    const ms = String(timestamp).slice(-3);
+
+                    return `${YYYY}${MM}${DD}${HH}${mm}-${ms}`;
+                },
+
+                // Method baru untuk copy ke WhatsApp
+                copyToWA(item) {
+                    const data = item;
+
+                    // Template string disesuaikan dengan permintaan:
+                    const formattedText =
+                        `*👤 PIC/UIC  :*\n` +
+                        `${data.user || '-'}\n` +
+                        `*📝 Task     :*\n` +
+                        `${data.title || '-'}\n\n` +
+                        `Deadline : \n` +
+                        `*${this.formatDate(data.deadline) || '-'}*`;
+
+                    // Logic Copy ke Clipboard
+                    const executeCopy = () => {
+                        if (navigator.clipboard && window.isSecureContext) {
+                            return navigator.clipboard.writeText(formattedText);
+                        } else {
+                            const textArea = document.createElement("textarea");
+                            textArea.value = formattedText;
+                            document.body.appendChild(textArea);
+                            textArea.select();
+                            try {
+                                const success = document.execCommand('copy');
+                                document.body.removeChild(textArea);
+                                return success ? Promise.resolve() : Promise.reject();
+                            } catch (err) {
+                                document.body.removeChild(textArea);
+                                return Promise.reject(err);
+                            }
+                        }
+                    };
+
+                    // Jalankan Copy dan panggil Toast milik VUE
+                    executeCopy()
+                        .then(() => {
+                            this.toastMessage = "Format WA berhasil disalin!";
+                            this.showToast = true;
+                            setTimeout(() => { this.showToast = false; }, 3000);
+                        })
+                        .catch(() => {
+                            this.toastMessage = "Gagal menyalin!";
+                            this.showToast = true;
+                            setTimeout(() => { this.showToast = false; }, 3000);
+                        });
+                },
+                openTambahModal() {
+                    // Menggunakan Timestamp sebagai ID unik sesuai master plan keamanan
+                    this.formData.id = 'TRX-' + Date.now();
+                    this.formData.nama_kegiatan = '';
+                    this.formData.pic = '';
+                    this.formData.tgl_deadline = '';
+                    this.showModal = true;
+                },
+
+                showSuccessToast(pesan) {
+                    this.toastMessage = pesan;
+                    this.showToast = true;
+
+                    // Sembunyikan otomatis setelah 3 detik
+                    setTimeout(() => {
+                        this.showToast = false;
+                    }, 3000);
+                },
+
+                simpanData() {
+                    if (!this.formData.nama_kegiatan || !this.formData.pic || !this.formData.tgl_deadline) {
+                        alert('Mohon lengkapi semua data sebelum menyimpan.');
+                        return;
+                    }
+
+                    this.tasks = [];
+
+                    // 1. Penanganan Tanggal tetap sama
+                    var waktu1 = Date.now();
+                    var dateObj = new Date(waktu1);
+                    var options = { timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit" };
+                    var tanggalIndonesia = new Intl.DateTimeFormat("id-ID", options).format(dateObj);
+                    var parts = tanggalIndonesia.split("/");
+                    var tanggalInput = `${parts[2]}-${parts[1]}-${parts[0]}`;
+
+                    // 2. Bungkus data ke dalam objek JSON
+                    // Tambahkan single quote (') jika memang diperlukan oleh logic Backend GAS Anda
+                    var payload = {
+                        id: waktu1,
+                        tanggal: tanggalInput,
+                        nama_kegiatan: `'${this.formData.nama_kegiatan}`,
+                        pic: `'${this.formData.pic}`,
+                        tgl_deadline: this.formData.tgl_deadline
+                    };
+
+                    // 3. Bangun URL dasar (Base URL saja tanpa parameter data)
+                    var baseUrl = "https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec";
+
+                    let app = this;
+                    app.loading = true;
+                    app.showModal = false;
+
+                    $.ajax({
+                        type: "GET",
+                        url: baseUrl,
+                        crossDomain: true,
+                        dataType: "jsonp",
+                        // Menggunakan properti 'data' agar jQuery melakukan encoding otomatis
+                        data: {
+                            action: "insert",
+                            table: "data2026",
+                            data: JSON.stringify(payload)
+                        },
+                        complete: function () {
+                            // --- LOGIKA RESET & CLOSE ---
+                            app.formData.nama_kegiatan = '';
+                            app.formData.pic = '';
+                            app.formData.tgl_deadline = '';
+
+                            // --- PEMANGGILAN TOAST DISINI ---
+                            app.showSuccessToast("Data Berhasil Disimpan!");
+
+                            // Perbaikan: gunakan 'app' bukan 'this' di dalam callback complete
+                            app.filteredTasks = [];
+
+                            setTimeout(() => {
+                                if (typeof app.ambilData === "function") {
+                                    app.ambilData();
+                                }
+                                app.loading = false;
+                                console.log("Proses Simpan Berhasil Selesai");
+                            }, 1000);
+                        }
+                    });
+                },
+                ambilDetail() {
+                    const urlDetail = "https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec?action=read&table=details2026";
+                    let app = this;
+                    $.getJSON(urlDetail, function (jsonDetail) {
+                        const details = jsonDetail.data || [];
+
+                        // Update details di formDataEdit (modal yang sedang terbuka)
+                        const detailsForTask = details
+                            .filter(d => String(d.task_id) === String(app.formDataEdit.id))
+                            .map(d => ({ ...d, done: String(d.done) }));
+                        app.$set(app.formDataEdit, 'details', detailsForTask);
+
+                        // Update details di tasks (list utama) tanpa fetch ulang task
+                        app.tasks = app.tasks.map(task => ({
+                            ...task,
+                            details: details
+                                .filter(d => String(d.task_id) === String(task.no))
+                                .map(d => ({ ...d, done: String(d.done) }))
+                        }));
+                    });
+                },
                 ambilData() {
                     this.loading = true;
-                    const url = "https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec?action=read&table=data";
+                    const urlTask = "https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec?action=read&table=data2026";
+                    const urlDetail = "https://script.google.com/macros/s/AKfycbxN2IjRhcpQc-EWoMSkOiMb9PVxC8EwqqG3kSJCfpJXBOpX2Ar6KsOwL0kPhjQxyPJoMA/exec?action=read&table=details2026";
                     let app = this;
-                    $.getJSON(url, function (json) {
-                        app.tasks = json.data.map(item => ({
-                            no: item.no,
-                            title: item["nama kegiatan"],
-                            user: item.pic,
-                            deadline: item["tgl deadline"]
-                        }));
-                        app.loading = false;
+
+                    $.getJSON(urlTask, function (jsonTask) {
+                        $.getJSON(urlDetail, function (jsonDetail) {
+                            const details = jsonDetail.data || [];
+                            app.tasks = jsonTask.data.map(item => ({
+                                no: item.id,
+                                title: item["nama_kegiatan"],
+                                user: item.pic,
+                                deadline: item["tgl_deadline"],
+                                details: details
+                                    .filter(d => String(d.task_id) === String(item.id))
+                                    .map(d => ({
+                                        ...d,
+                                        done: String(d.done), // normalisasi ke string
+                                    }))
+                            }));
+                            app.loading = false;
+                        });
                     });
                 },
                 resetFilter() {
@@ -284,6 +1653,7 @@
                     this.filterStart = '';
                     this.filterEnd = '';
                     this.search = '';
+                    this.filterPic = '';
                 },
                 getInitials(name) { return name ? name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '??'; },
                 formatDate(dateStr) {
@@ -292,19 +1662,27 @@
                     return new Date(dateStr).toLocaleDateString('id-ID', options);
                 },
                 getUrgencyClass(days) {
-                    if (days < 0) return 'bg-green-100 text-green-600';
-                    if (days === 0) return 'bg-red-500 text-white';
-                    if (days <= 3) return 'bg-red-100 text-red-600';
-                    return 'bg-blue-100 text-blue-600';
+                    if (days < 0) return 'bg-emerald-200 text-emerald-800'; // selesai (aman, soft tapi jelas)
+                    if (days === 0) return 'bg-red-700 text-white animate-pulse'; // HARI H - sangat bahaya
+                    if (days <= 1) return 'bg-red-600 text-white';
+                    if (days <= 2) return 'bg-red-500 text-white';
+                    if (days <= 3) return 'bg-orange-500 text-white';
+                    if (days <= 4) return 'bg-amber-400 text-black';
+                    if (days <= 5) return 'bg-yellow-300 text-black';
+                    return 'bg-sky-200 text-sky-800'; // masih jauh
                 },
                 getDaysText(days) {
                     if (days < 0) return 'Selesai';
                     if (days === 0) return 'Hari Ini';
-                    return days + ' Hari Lagi';
+                    return days + ' Hari';
                 }
             },
             mounted() {
                 this.ambilData();
+                // Jika lebar layar > 768px (Desktop), buka filter otomatis
+                if (window.innerWidth > 768) {
+                    this.showFilter = false;
+                }
             }
         });
     </script>
