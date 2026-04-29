@@ -586,16 +586,16 @@
                         <!-- ========================= -->
                         <!-- DETAIL KEGIATAN -->
                         <!-- ========================= -->
-                        <div v-if="detail" class="border border-slate-200 rounded-xl overflow-hidden">
+                        <div v-if="detail" class="bg-green-50 border border-slate-200 rounded-xl overflow-hidden">
 
                             <!-- HEADER -->
-                            <div class="px-4 bg-green-50 flex justify-end items-center">
+                            <div class="px-4 bg-green-100 flex justify-end items-center">
                                 <button @click="detail=false">
                                     <span class="text-red-500">x</span>
                                 </button>
                             </div>
                             <div
-                                class="px-4 py-2.5 bg-green-50 border-b border-slate-100 flex justify-between items-center">
+                                class="px-4 py-2.5 bg-green-100 border-b border-slate-100 flex justify-between items-center">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-bold text-slate-700">Detail Kegiatan</span>
                                     <span class="text-[10px] bg-indigo-100 text-indigo-700 rounded-full px-2 py-0.5">
@@ -648,7 +648,7 @@
                             </transition>
 
                             <!-- PROGRESS -->
-                            <div class="px-4 py-2 bg-green-50 border-b border-slate-100 flex items-center gap-3">
+                            <div class="px-4 py-2 bg-green-100 border-b border-slate-100 flex items-center gap-3">
                                 <div class="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
                                     <div class="h-full rounded-full transition-all duration-300"
                                         :class="progressPercent >= 100 ? 'bg-green-500' : progressPercent > 50 ? 'bg-indigo-500' : 'bg-amber-400'"
@@ -821,11 +821,11 @@
 
                         <!-- Section Detail Kegiatan -->
                         <div v-if="formDataEdit.details.length > 0"
-                            class="border border-slate-200 rounded-xl overflow-hidden">
+                            class="bg-green-50 border border-slate-200 rounded-xl overflow-hidden">
 
                             <!-- Header -->
                             <div
-                                class="px-4 py-2.5 bg-green-50 border-b border-slate-100 flex justify-between items-center">
+                                class="px-4 py-2.5 bg-green-100 border-b border-slate-100 flex justify-between items-center">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-bold text-slate-700">Detail Kegiatan</span>
                                     <span class="text-[10px] bg-indigo-100 text-indigo-700 rounded-full px-2 py-0.5">
@@ -856,7 +856,7 @@
                             </div>
 
                             <!-- Progress Bar -->
-                            <div class="px-4 py-2 bg-green-50 border-b border-slate-100 flex items-center gap-3">
+                            <div class="px-4 py-2 bg-green-100 border-b border-slate-100 flex items-center gap-3">
                                 <div class="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
                                     <div class="h-full rounded-full transition-all duration-300"
                                         :class="progressPercent >= 100 ? 'bg-green-500' : progressPercent > 50 ? 'bg-indigo-500' : 'bg-amber-400'"
