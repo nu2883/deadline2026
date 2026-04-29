@@ -79,10 +79,10 @@
             </div>
         </div>
 
-        <div class="max-w-[1400px] mx-auto p-4 md:p-8">
+        <div class="max-w-[1400px] mx-auto  md:p-8">
 
 
-            <div class="grid grid-cols-3 md:grid-cols-3 gap-3 md:gap-6 mb-6">
+            <div class="grid grid-cols-3 md:grid-cols-3 gap-3 md:gap-6 mt-3 mb-3 px-3">
                 <div @click="setFilter('all')" :class="filterStatus === 'all' ? 'ring-2 ring-blue-500' : ''"
                     class="cursor-pointer bg-white p-3 md:p-6 rounded-2xl custom-shadow border border-slate-100 flex flex-col md:flex-row items-center md:justify-between text-center md:text-left">
                     <div class="flex flex-col md:flex-row items-center gap-2 md:gap-4">
@@ -132,31 +132,34 @@
             </div>
 
             <div class="bg-white rounded-3xl custom-shadow border border-slate-100">
-                <div
-                    class=" sticky top-16 z-40 bg-white border-b border-slate-100 shadow-sm p-1 md:p-1 px-2 flex flex-col md:flex-row justify-between items-center">
-                    <h2 class="text-xl font-extrabold text-slate-800 tracking-tight uppercase">
-                        Monitoring Deadline
-                    </h2>
+<div class="sticky top-16 z-40 bg-white border-b border-slate-100 shadow-sm px-3 md:px-6 py-2 flex flex-row justify-between items-center gap-2">
+    
+    <h2 class="text-sm md:text-xl font-extrabold text-slate-800 tracking-tight uppercase whitespace-nowrap">
+        Monitoring Deadline
+    </h2>
 
-                    <div class="flex flex-wrap w-full md:w-auto gap-3">
+    <div class="flex w-auto gap-2 md:gap-3">
 
-                        <button @click="showFilter = true"
-                            class="flex-1 md:flex-none px-4 py-2.5 bg-white text-slate-600 border border-slate-200 rounded-xl text-sm font-bold flex items-center justify-center shadow-sm hover:bg-slate-50 transition-all">
-                            <i class="fas fa-filter mr-2 text-blue-500"></i> Filter
-                        </button>
+        <button @click="showFilter = true"
+            class="md:flex-none px-3 md:px-4 py-2 md:py-2.5 bg-white text-slate-600 border border-slate-200 rounded-xl text-sm font-bold flex items-center justify-center shadow-sm hover:bg-slate-50 transition-all">
+            <i class="fas fa-filter text-blue-500 md:mr-2"></i>
+            <span class="hidden md:inline">Filter</span>
+        </button>
 
-                        <button @click="ambilData"
-                            class="flex-1 md:flex-none bg-white text-blue-600 border border-blue-200 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center shadow-sm hover:bg-blue-50 active:scale-95 transition-all">
-                            <i class="fas fa-sync-alt mr-2" :class="{'animate-spin': loading}"></i> Sync
-                        </button>
+        <button @click="ambilData"
+            class="md:flex-none bg-white text-blue-600 border border-blue-200 px-3 md:px-5 py-2 md:py-2.5 rounded-xl text-sm font-bold flex items-center justify-center shadow-sm hover:bg-blue-50 active:scale-95 transition-all">
+            <i class="fas fa-sync-alt md:mr-2" :class="{'animate-spin': loading}"></i>
+            <span class="hidden md:inline">Sync</span>
+        </button>
 
-                        <button @click="openTambahModal"
-                            class="flex-[2] md:flex-none bg-indigo-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all">
-                            <i class="fas fa-plus mr-2"></i> Rekam
-                        </button>
+        <button @click="openTambahModal"
+            class="md:flex-none bg-indigo-600 text-white px-3 md:px-6 py-2 md:py-2.5 rounded-xl text-sm font-bold flex items-center justify-center shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-95 transition-all">
+            <i class="fas fa-plus md:mr-2"></i>
+            <span class="hidden md:inline">Rekam</span>
+        </button>
 
-                    </div>
-                </div>
+    </div>
+</div>
 
 
 
