@@ -352,12 +352,12 @@
         </div>
         <!-- {{linn}} -->
 
-        <transition name="fade">
-            <div v-if="showModal"
-                class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+<transition name="fade">
+    <div v-if="showModal"
+        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center md:p-4">
 
-                <div
-                    class="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+        <div
+            class="bg-white w-full h-full md:h-auto md:max-w-xl md:rounded-2xl shadow-2xl overflow-hidden transform transition-all border border-slate-100">
 
                     <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                         <h3 class="text-lg font-bold text-slate-800">Tambah Kegiatan Baru</h3>
@@ -509,12 +509,12 @@
         </transition>
 
 
-        <transition name="fade">
-            <div v-if="showModalEdit"
-                class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+<transition name="fade">
+    <div v-if="showModalEdit"
+        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center md:p-4">
 
-                <div
-                    class="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+        <div
+            class="bg-white w-full h-full md:h-auto md:max-w-xl md:rounded-2xl shadow-2xl overflow-hidden transform transition-all border border-slate-100">
 
                     <!-- HEADER -->
                     <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
@@ -722,7 +722,7 @@
             </div>
         </transition>
 
-
+        
         <transition name="fade">
             <div v-if="showModalEditDetail"
                 class="fixed inset-0 z-[600] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
@@ -765,12 +765,12 @@
         </transition>
 
 
-        <transition name="fade">
-            <div v-if="showModalShow"
-                class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+<transition name="fade">
+    <div v-if="showModalShow"
+        class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center md:p-4">
 
-                <div
-                    class="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden transform transition-all border border-slate-100">
+        <div
+            class="bg-white w-full h-full md:h-auto md:max-w-xl md:rounded-2xl shadow-2xl overflow-hidden transform transition-all border border-slate-100">
 
                     <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                         <h3 class="text-lg font-bold text-slate-800">Detail Kegiatan</h3>
@@ -1414,30 +1414,38 @@ updateData() {
                     this.showModalShow = true;
                 },
 
+bukaEdit(task) {
+    let formattedDate = "";
+    if (task.deadline) {
+        const dateObj = new Date(task.deadline);
+        const year = dateObj.getFullYear();
+        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const day = String(dateObj.getDate()).padStart(2, '0');
+        formattedDate = `${year}-${month}-${day}`;
+    }
 
-                bukaEdit(task) {
-                    let formattedDate = "";
-                    if (task.deadline) {
-                        const dateObj = new Date(task.deadline);
-                        const year = dateObj.getFullYear();
-                        const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-                        const day = String(dateObj.getDate()).padStart(2, '0');
-                        formattedDate = `${year}-${month}-${day}`;
-                    }
+    this.formDataEdit = {
+        id: task.no,
+        nama_kegiatan: task.title,
+        pic: task.user,
+        tgl_deadline: formattedDate,
+        details: Array.isArray(task.details) ? task.details.map(d => ({
+            ...d,
+            done: String(d.done)
+        })) : []
+    };
 
-                    this.formDataEdit = {
-                        id: task.no,
-                        nama_kegiatan: task.title,
-                        pic: task.user,
-                        tgl_deadline: formattedDate,
-                        details: Array.isArray(task.details) ? task.details.map(d => ({
-                            ...d,
-                            done: String(d.done) // ← pastikan string
-                        })) : []
-                    };
+    // Jika ada detail, langsung buka section detail
+    this.showAddDetailForm = false;
+    
+    if(task.details.length > 0){
+this.detail = true;
+    }
+     
 
-                    this.showModalEdit = true;
-                },
+    this.showModalEdit = true;
+},
+                
                 // Fungsi format ID (jika belum ada) agar tampilan di modal tetap cantik
                 formatIdHuman(no) {
                     return no.toString().slice(-5); // Contoh: ambil 5 digit terakhir saja
