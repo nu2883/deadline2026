@@ -207,21 +207,28 @@
                                         <!-- Kalau ada details, tampilkan progress -->
                                         <template v-if="task.details && task.details.length > 0">
                                             <div class="flex flex-col gap-1 w-full">
-                                                <div class="flex items-center gap-2">
-                                                    <i v-if="task.daysLeft < 0"
-                                                        class="fas fa-check-circle text-green-500 text-lg"></i>
-                                                    <i v-else-if="task.daysLeft <= 3"
-                                                        class="fas fa-star text-blue-500 text-lg"></i>
-                                                    <div v-else class="w-5 h-5 border-2 border-slate-300 rounded-full">
-                                                    </div>
-                                                    <span class="text-xs font-bold text-slate-600">{{ task.daysLeft < 0
-                                                            ? 'Done' : (task.daysLeft <=3 ? 'Priority' : 'Pending' )
-                                                            }}</span>
-                                                            <span class="text-xs font-bold ml-auto"
-                                                                :class="calcProgress(task.details) >= 100 ? 'text-green-600' : 'text-slate-400'">
-                                                                {{ calcProgress(task.details) }}%
-                                                            </span>
-                                                </div>
+<div class="flex items-center gap-2">
+    <template v-if="calcProgress(task.details) >= 100">
+        <div class="flex items-center gap-2 w-full justify-center">
+            <i class="fas fa-check-circle text-green-500 text-lg"></i>
+            <span class="text-xs font-bold text-green-600">100%</span>
+        </div>
+    </template>
+    <template v-else>
+        <i v-if="task.daysLeft < 0"
+            class="fas fa-check-circle text-green-500 text-lg"></i>
+        <i v-else-if="task.daysLeft <= 3"
+            class="fas fa-star text-blue-500 text-lg"></i>
+        <div v-else class="w-5 h-5 border-2 border-slate-300 rounded-full">
+        </div>
+        <span class="text-xs font-bold text-slate-600">{{ task.daysLeft < 0
+            ? 'Done' : (task.daysLeft <= 3 ? 'Priority' : 'Pending')
+            }}</span>
+        <span class="text-xs font-bold ml-auto text-slate-400">
+            {{ calcProgress(task.details) }}%
+        </span>
+    </template>
+</div>
                                                 <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
                                                     <div class="h-full rounded-full transition-all duration-300"
                                                         :class="calcProgress(task.details) >= 100 ? 'bg-green-500' : calcProgress(task.details) > 50 ? 'bg-indigo-500' : 'bg-amber-400'"
@@ -290,14 +297,19 @@
                                 #id-{{ formatIdHuman(task.no) }}
                             </span>
                             <div class="flex items-center gap-2">
-                                                                <button @click="showModalShow1(task)"  v-if="task.details && task.details.length > 0"
-                                    class="w-8 h-8 flex items-center justify-center bg-red-50 text-blue-600 rounded-full hover:bg-amber-100 transition-colors"
-                                    title="Edit Task">
-                              <span class="text-xs font-bold ml-auto"
-                                                                :class="calcProgress(task.details) >= 100 ? 'text-green-600' : 'text-slate-400'">
-                                                                {{ calcProgress(task.details) }}%
-                                                            </span>
-                                </button>
+                                                   
+                                <button @click="showModalShow1(task)" v-if="task.details && task.details.length > 0"
+    :class="calcProgress(task.details) >= 100 
+        ? 'w-10 h-10 flex items-center justify-center bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors' 
+        : 'w-10 h-10 flex items-center justify-center bg-red-50 text-blue-600 rounded-full hover:bg-amber-100 transition-colors'"
+    title="Edit Task">
+    <span class="text-xs font-bold"
+        :class="calcProgress(task.details) >= 100 ? 'text-white' : 'text-slate-400'">
+        {{ calcProgress(task.details) }}%
+    </span>
+</button>
+
+
                                 <button @click="bukaEdit(task)"
                                     class="w-8 h-8 flex items-center justify-center bg-amber-50 text-blue-600 rounded-full hover:bg-amber-100 transition-colors"
                                     title="Edit Task">
@@ -677,7 +689,7 @@
 
                                     <div class="flex-1 text-sm flex items-center gap-2">
                                         <span
-                                            :class="d.done === 'true' ? 'line-through text-slate-400' : 'text-slate-700'">
+                                            :class="d.done === 'true' ? 'text-slate-400' : 'text-slate-700'">
                                             {{ d.text }}
                                         </span>
                                         <span v-if="d.pct !== null && d.pct !== '' && d.pct !== '-'"
@@ -885,7 +897,7 @@
 
                                         <!-- TEXT (kena coret) -->
                                         <span
-                                            :class="d.done === 'true' ? 'line-through text-slate-400' : 'text-slate-700'">
+                                            :class="d.done === 'true' ? 'text-slate-400' : 'text-slate-700'">
                                             {{ d.text }}
                                         </span>
 
