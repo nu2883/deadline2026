@@ -618,49 +618,14 @@
                                     </span>
                                 </div>
 
-                                <!-- 🔥 TOGGLE BUTTON -->
-                                <button @click="toggleDetailForm"
-                                    class="text-xs font-bold px-2.5 py-1 rounded-lg transition-all" :class="showAddDetailForm 
-                                ? 'text-red-600 bg-red-50 hover:bg-red-100' 
-                                : 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100'">
-
-                                    <span v-if="!showAddDetailForm">+ Tambah Details</span>
-                                    <span v-else>Tutup</span>
-                                </button>
+<!-- 🔥 TOGGLE BUTTON - ganti jadi trigger modal -->
+<button @click="bukaModalAddDetail"
+    class="text-xs font-bold px-2.5 py-1 rounded-lg transition-all text-indigo-600 bg-indigo-50 hover:bg-indigo-100">
+    + Tambah Details
+</button>
                             </div>
 
-                            <!-- 🔥 FORM TAMBAH -->
-                            <transition name="fade">
-                                <div v-if="showAddDetailForm"
-                                    class="px-4 py-3 bg-green-200 border-b border-slate-100 space-y-2">
 
-                                    <input type="text" v-model="newDetailText" ref="inputDetail"
-                                        placeholder="Isi detail kegiatan..."
-                                        class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-400">
-
-                                    <div class="flex items-center gap-2">
-                                        <label class="text-[10px] text-slate-400 whitespace-nowrap">
-                                            Bobot spesifik (%)
-                                        </label>
-                                        <input type="number" v-model.number="newDetailPct" min="0" max="100"
-                                            placeholder="kosongkan jika otomatis"
-                                            class="flex-1 border border-slate-200 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-indigo-400">
-                                    </div>
-
-                                    <div class="flex gap-2">
-                                        <button @click="showAddDetailForm = false"
-                                            class="bg-red-300 flex-1 py-1.5 text-xs border border-slate-200 rounded-lg text-white-500 hover:bg-red-200">
-                                            Batal
-                                        </button>
-
-                                        <button @click="addDetail"
-                                            class="flex-1 py-1.5 text-xs bg-indigo-600 text-white rounded-lg font-bold hover:bg-indigo-700">
-                                            Simpan
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </transition>
 
                             <!-- PROGRESS -->
                             <div class="px-4 py-2 bg-green-100 border-b border-slate-100 flex items-center gap-3">
@@ -738,6 +703,43 @@
                 </div>
             </div>
         </transition>
+
+        <transition name="fade">
+    <div v-if="showModalAddDetail"
+        class="fixed inset-0 z-[600] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+
+            <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="text-sm font-bold text-slate-800">Tambah Detail</h3>
+                <button @click="showModalAddDetail = false" class="text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="p-5 space-y-3">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Isi Detail</label>
+                    <textarea v-model="newDetailText" rows="3" ref="inputAddDetail"
+                        class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-400 resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] mb-1">Bobot Spesifik (%)</label>
+                    <input type="number" v-model.number="newDetailPct" min="0" max="100"
+                        placeholder="kosongkan jika otomatis"
+                        class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:border-indigo-400">
+                </div>
+            </div>
+
+            <div class="px-5 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
+                <button @click="showModalAddDetail = false"
+                    class="bg-red-300 flex-1 py-2 text-xs border border-slate-200 rounded-xl text-slate-500 hover:bg-red-200">Batal</button>
+                <button @click="simpanAddDetail"
+                    class="flex-1 py-2 text-xs bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700">Simpan</button>
+            </div>
+
+        </div>
+    </div>
+</transition>
 
 
         <transition name="fade">
@@ -987,6 +989,7 @@
                     text: '',
                     pct: '',
                 },
+                showModalAddDetail: false,
 
             },
             computed: {
@@ -1135,6 +1138,20 @@
 },
             },
             methods: {
+      bukaModalAddDetail() {
+    this.newDetailText = '';
+    this.newDetailPct = null;
+    this.showModalAddDetail = true;
+    this.$nextTick(() => {
+        this.$refs.inputAddDetail.focus();
+    });
+},
+
+simpanAddDetail() {
+    if (!this.newDetailText.trim()) return;
+    this.addDetail(); // gunakan method addDetail yang sudah ada
+    this.showModalAddDetail = false;
+},
                 bukaEditDetail(d) {
                     this.formEditDetail = {
                         index: this.formDataEdit.details.findIndex(x => x.id === d.id),
